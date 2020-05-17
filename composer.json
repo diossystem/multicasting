@@ -1,0 +1,37 @@
+{
+    "name": "diossystem/multicasting",
+    "description": "Multicasting for attributes of models",
+    "type": "library",
+    "keywords": ["casting", "cast", "attribute", "model", "eloquent", "laravel", "custom", "mutator", "multitype"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Oleg Dmitrochenko",
+            "email": "dmitrochenkooleg@gmail.com"
+        }
+    ],
+    "require": {
+       "php": ">=7.0",
+       "illuminate/database": "5.* || 6.* || 7.* || 8.*"
+    },
+    "require-dev": {
+        "orchestra/testbench": "3.5.x-dev",
+        "orchestra/database": "~3.5",
+        "illuminate/support": "5.* || 6.* || 7.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Dios\\System\\Multicasting\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests"
+        },
+        "classmap": [
+            "database/seeds/",
+            "database/factories/"
+        ]
+    },
+    "minimum-stability": "dev"
+}
