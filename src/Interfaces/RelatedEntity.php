@@ -15,8 +15,30 @@ interface RelatedEntity extends MulticastingEntity
      * Initializes an instance of the class.
      *
      * @param Model $instance
+     * @param string $attribute An attribute of the model.
      */
-    public function __construct(Model &$instance);
+    public function __construct(Model &$instance, string $attribute);
+
+    /**
+     * Returns the current model of the instance.
+     *
+     * @return Model
+     */
+    public function getModel(): Model;
+
+    /**
+     * Returns a reference to the current model.
+     *
+     * @return Model
+     */
+    public function &getReference(): Model;
+
+    /**
+     * Returns an attribute name.
+     *
+     * @return string
+     */
+    public function getAttribteName(): string;
 
     /**
      * Saves an instance with the current values.

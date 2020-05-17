@@ -263,7 +263,7 @@ trait AttributeMulticasting
                 $instance = new $className($this, $this->propertyOfEntityValues);
                 break;
             case self::RELATED_ENTITY:
-                $instance = new $className($this);
+                $instance = new $className($this, $this->propertyOfEntityValues);
                 break;
             case self::SIMPLE:
             default:
