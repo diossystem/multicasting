@@ -1,6 +1,6 @@
 {
     "name": "diossystem/multicasting",
-    "description": "Multicasting for attributes of models",
+    "description": "Multicasting for attributes of models. One attribute of a model can have many types.",
     "type": "library",
     "keywords": ["casting", "cast", "attribute", "model", "eloquent", "laravel", "custom", "mutator", "multitype"],
     "license": "MIT",
