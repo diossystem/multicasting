@@ -9,27 +9,6 @@ namespace Dios\System\Multicasting;
 trait AttributeMulticasting
 {
     /**
-     * The type name is 'instance from model'.
-     *
-     * @var string
-     */
-    const INSTANCE_FROM_MODEL = 'instance_from_model';
-
-    /**
-     * THe type name is 'related_entity'.
-     *
-     * @var string
-     */
-    const RELATED_ENTITY = 'related_entity';
-
-    /**
-     * The type name is 'simple'.
-     *
-     * @var string
-     */
-    const SIMPLE = 'simple';
-
-    /**
      * The cache of entity keys.
      *
      * @var array
@@ -259,13 +238,11 @@ trait AttributeMulticasting
         $interfaceType = $this->getInterfaceTypeOfEntities();
 
         switch ($interfaceType) {
-            case self::INSTANCE_FROM_MODEL:
+            case 'related_entity':
+            case 'entity_with_model':
                 $instance = new $className($this, $this->propertyOfEntityValues);
                 break;
-            case self::RELATED_ENTITY:
-                $instance = new $className($this, $this->propertyOfEntityValues);
-                break;
-            case self::SIMPLE:
+            case 'simple':
             default:
                 $instance = new $className($this->{$this->propertyOfEntityValues});
                 break;
