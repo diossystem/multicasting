@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests;
+namespace Tests\Models;
 
 use Dios\System\Multicasting\AttributeMulticasting;
 use Dios\System\Multicasting\ReadwriteInstance;
@@ -53,7 +53,8 @@ class AdditionalFieldsOfPages extends Pivot
      * @var array
      */
     protected $entityTypeMapping = [
-        'map' => \Dios\System\Page\Models\HandlersOfAdditionalFields\Map::class,
+        'map' => \Tests\Models\AdditionalFieldHandlers\Map::class,
+        'images' => \Tests\Models\AdditionalFieldHandlers\Images::class,
     ];
 
     /**
@@ -61,7 +62,7 @@ class AdditionalFieldsOfPages extends Pivot
      *
      * @var string|null
      */
-    protected $defaultEntityHandler = \Dios\System\Page\Models\HandlersOfAdditionalFields\DefaultHandler::class;
+    protected $defaultEntityHandler = \Tests\Models\AdditionalFieldHandlers\DefaultHandler::class;
 
     /**
      * The source that contains an entity type.

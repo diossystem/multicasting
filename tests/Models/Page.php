@@ -1,8 +1,10 @@
 <?php
 
-namespace Tests;
+namespace Tests\Models;
 
 use DateTime;
+use Dios\System\Multicasting\AttributeMulticasting;
+use Dios\System\Multicasting\ReadwriteInstance;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -13,16 +15,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class Page extends Model
 {
     use AttributeMulticasting, ReadwriteInstance;
-    
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'priority',
         'title',
-        'subtitle',
         'content',
         'description',
         'description_tag',
@@ -46,26 +46,6 @@ class Page extends Model
     protected $casts = [
         'important' => 'boolean',
     ];
-
-    /**
-     * Returns a parent of the page.
-     *
-     * @return HasOne
-     */
-    public function parent(): HasOne
-    {
-        return $this->hasOne(self::class, 'id', 'parent_id');
-    }
-
-    /**
-     * Returns children of the page.
-     *
-     * @return HasMany
-     */
-    public function children(): HasMany
-    {
-        return $this->hasMany(self::class, 'parent_id');
-    }
 
     /**
      * Returns a template of the page.
@@ -151,58 +131,5 @@ class Page extends Model
             ? $query->state(PageState::PUBLISHED)
             : $query->where('state', '<>', PageState::PUBLISHED)
         ;
-    }
-
-    /**
-     * Returns pages that have active templates.
-     *
-     * @param  Builder $query
-     * @return Builder
-     */
-    public function scopeActiveTemplate(Builder $query): Builder
-    {
-        return $query->whereHas('template', function ($query) {
-            $query->active();
-        });
-    }
-
-    /**
-     * Returns published pages.
-     * A published page is a page whose a date of publication greater or equal
-     * than the current date.
-     *
-     * WARNING: The NOW() function do not work with SQLite.
-     * Set $currentDate with an instance of DateTime, such as "new DateTime('now')".
-     *
-     * @param  Builder  $query
-     * @param  DateTime $currentDate
-     * @return Builder
-     */
-    public function scopePublished(Builder $query, DateTime $currentDate = null): Builder
-    {
-        return $currentDate
-            ? $query->whereRaw('published_at <= ?', $currentDate->format('Y-m-d H:i:s'))
-            : $query->whereRaw('published_at <= NOW()')
-        ;
-    }
-
-    /**
-     * Returns pages that are allowed to show.
-     *
-     * @param  DateTime $currentDate
-     * @return Builder
-     */
-    public function scopeSeen(Builder $query, DateTime $currentDate = null): Builder
-    {
-        return $query
-            ->activeTemplate()
-            ->active()
-            ->published($currentDate)
-        ;
-    }
-
-    public function newCollection(array $models = [])
-    {
-        return new PageCollection($models);
     }
 }
