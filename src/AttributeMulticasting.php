@@ -37,8 +37,8 @@ trait AttributeMulticasting
             list($realSource, $linkToSource) = $sources;
 
             // Gets a key from the static cache
-            if ($cache && self::hasCacheEntityKey($linkToSource)) {
-                return self::getCacheOfEntityKey($linkToSource);
+            if ($cache && self::hasCacheEntityKey($this->{$linkToSource})) {
+                return self::getCacheOfEntityKey($this->{$linkToSource});
             }
 
             /** @var string|mixed|null $key **/
@@ -46,7 +46,7 @@ trait AttributeMulticasting
 
             // Caches using $linkToSource
             if ($cache) {
-                self::addCacheOfEntityKey($linkToSource, $key);
+                self::addCacheOfEntityKey($this->{$linkToSource}, $key);
             }
 
             return $key;
