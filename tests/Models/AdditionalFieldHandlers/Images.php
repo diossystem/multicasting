@@ -29,7 +29,7 @@ class Images implements SimpleEntity
      */
     public function fillFromArray(array $values)
     {
-        $this->list = $values['list'] ?? [];
+        $this->list = new ImageCollection($values['list'] ?? []);
         $this->active = $values['active'] ?? false;
         $this->numberOfVisibleImages = $values['number_of_visible_images'] ?? 0;
         $this->visualizationType = $values['visualization_type'] ?? 'list';
@@ -68,9 +68,9 @@ class Images implements SimpleEntity
     /**
      * Returns a list of images.
      *
-     * @return array
+     * @return ImageCollection|Image[]
      */
-    public function getList(): array
+    public function getList(): ImageCollection
     {
         return $this->list;
     }
@@ -83,7 +83,7 @@ class Images implements SimpleEntity
     public function toArray(): array
     {
         return [
-            'list' => $this->list,
+            'list' => $this->list->toArray(),
             'active' => $this->active,
             'number_of_visible_images' => $this->numberOfVisibleImages,
             'visualization_type' => $this->visualizationType,
