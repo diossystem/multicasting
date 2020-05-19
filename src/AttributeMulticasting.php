@@ -260,4 +260,50 @@ trait AttributeMulticasting
     {
         return $this->interfaceType ?? null;
     }
+
+    /**
+     * Updates the current instance using a given instance.
+     * Both instances must be implemented using same entity.
+     *
+     * @param  MulticastingEntity $instance
+     * @param  bool               $throwException
+     *
+     * @throws Exception
+     */
+    public function updateInstance($instance, bool $throwException = true): bool
+    {
+        $currentInstance = $this->getInstance();
+
+        if (! ($instance instanceof get_class($currentInstance))) {
+            if ($throwException) {
+                throw new \Exception('The given instance has another type in comparison with the current instance.');
+            }
+
+            return false;
+        }
+
+        $this->instanceOfEntity = $instance;
+        $this->syncInstanceWithProperty();
+
+        return true;
+    }
+
+    /**
+     * Synchronizes values of the instance with values of the property.
+     * Returns a new value.
+     *
+     * @return mixed
+     */
+    public function syncInstanceWithProperty()
+    {
+        $currentInstance = $this->getInstance();
+
+        if ($currentInstance) {
+            $this->{$this->propertyOfEntityValues} = $instance->toArray();
+        } else {
+            $this->{$this->propertyOfEntityValues} = null;
+        }
+
+        return $this->{$this->propertyOfEntityValues};
+    }
 }
