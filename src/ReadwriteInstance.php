@@ -18,7 +18,7 @@ trait ReadwriteInstance
     }
 
     /**
-     * Sets values to the instance or the attribute.
+     * Sets values to the instance and the attribute ($propertyOfEntityValues).
      *
      * @param array $values
      */
@@ -26,10 +26,13 @@ trait ReadwriteInstance
     {
         $instance = $this->getInstance();
 
+        // Fills and gets data to update the current value of the property
+        // with normalized data.
         if ($instance) {
-            $this->fillFromArray($values);
-        } else {
-            $this->{$this->propertyOfEntityValues} = $values;
+            $instance->fillFromArray($values);
+            $values = $instance->toArray();
         }
+
+        $this->{$this->propertyOfEntityValues} = $values;
     }
 }

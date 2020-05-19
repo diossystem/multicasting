@@ -41,6 +41,16 @@ class Map implements SimpleEntity
     }
 
     /**
+     * Sets a new title.
+     *
+     * @param string $title 
+     */
+    public function setTitle(string $title)
+    {
+        $this->title = $title;
+    }
+
+    /**
      * Returns a title of the map.
      *
      * @return string|null

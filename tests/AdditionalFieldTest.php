@@ -235,6 +235,28 @@ class AdditionalFieldTest extends TestCase
         $this->assertEquals('/link/to/image', $urls[0]);
     }
 
+    public function testSetInstanceAttribute()
+    {
+        /** @var Page $pageWithMap **/
+        $pageWithMap = $this->getFirstPageOfAF('map');
+
+        /** @var SimpleEntity $instance **/
+        $instance = $pageWithMap->pivot->instance;
+
+        $instance->setTitle('New title');
+        $pageWithMap->pivot->instance = $instance->toArray();
+
+        $this->assertEquals($instance->toArray(), $pageWithMap->pivot->instance->toArray());
+        $this->assertEquals($instance->toArray(), $pageWithMap->pivot->values);
+
+        $pageWithMap->pivot->save();
+
+        /** @var Page $pageWithMap **/
+        $pageWithMapAfterSaving = $this->getFirstPageOfAF('map');
+
+        $this->assertEquals('New title', $pageWithMapAfterSaving->pivot->instance->toArray()['title']);
+    }
+
     /**
      * Returns a first page with AF by the given type of an additional field.
      *
