@@ -2,6 +2,8 @@
 
 namespace Dios\System\Multicasting;
 
+use Dios\System\Multicasting\Interfaces\MulticastingEntity;
+
 /**
  * The trait handlers models that have only one attribute
  * that can body forth many possible entities.
@@ -18,7 +20,7 @@ trait AttributeMulticasting
     /**
      * An instance of the current entity.
      *
-     * @var EntityHandlerInterface|null
+     * @var MulticastingEntity|null
      */
     protected $instanceOfEntity;
 
@@ -195,7 +197,7 @@ trait AttributeMulticasting
      * Returns an instance of the current instance of the model.
      * If the instance has not been initialized yet, this will be done.
      *
-     * @return EntityHandlerInterface|null
+     * @return MulticastingEntity|null
      */
     public function getInstance()
     {
@@ -209,7 +211,7 @@ trait AttributeMulticasting
     /**
      * Initializes an instance of the current entity and returns it.
      *
-     * @return EntityHandlerInterface|null
+     * @return MulticastingEntity|null
      */
     public function makeInstanceOfEntity()
     {
@@ -272,9 +274,18 @@ trait AttributeMulticasting
      */
     public function updateInstance($instance, bool $throwException = true): bool
     {
+        /** @var MulticastingEntity|null $currentInstance **/
         $currentInstance = $this->getInstance();
 
-        if (! ($instance instanceof get_class($currentInstance))) {
+        if (! $currentInstance) {
+            // Exception Undefined current instance
+            return false;
+        }
+
+        /** @var string $classNameOfCurrentInstance **/
+        $classNameOfCurrentInstance = get_class($currentInstance);
+
+        if (! ($instance instanceof $classNameOfCurrentInstance)) {
             if ($throwException) {
                 throw new \Exception('The given instance has another type in comparison with the current instance.');
             }
@@ -299,7 +310,7 @@ trait AttributeMulticasting
         $currentInstance = $this->getInstance();
 
         if ($currentInstance) {
-            $this->{$this->propertyOfEntityValues} = $instance->toArray();
+            $this->{$this->propertyOfEntityValues} = $currentInstance->toArray();
         } else {
             $this->{$this->propertyOfEntityValues} = null;
         }
