@@ -244,7 +244,7 @@ class AdditionalFieldTest extends TestCase
         $instance = $pageWithMap->pivot->instance;
 
         $instance->setTitle('New title');
-        $pageWithMap->pivot->instance = $instance->toArray();
+        $pageWithMap->pivot->instance = $instance;
 
         $this->assertEquals($instance->toArray(), $pageWithMap->pivot->instance->toArray());
         $this->assertEquals($instance->toArray(), $pageWithMap->pivot->values);
