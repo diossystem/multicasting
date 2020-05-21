@@ -3,6 +3,9 @@
 namespace Dios\System\Multicasting;
 
 use Dios\System\Multicasting\Interfaces\MulticastingEntity;
+use Dios\System\Multicasting\Interfaces\EntityWithModel;
+use Dios\System\Multicasting\Interfaces\RelatedEntity;
+use Dios\System\Multicasting\Interfaces\SimpleEntity;
 
 /**
  * The trait handlers models that have only one attribute
@@ -241,10 +244,13 @@ trait AttributeMulticasting
 
         switch ($interfaceType) {
             case 'related_entity':
+            case RelatedEntity::class:
             case 'entity_with_model':
+            case EntityWithModel::class:
                 $instance = new $className($this, $this->propertyOfEntityValues);
                 break;
             case 'simple':
+            case SimpleEntity::class:
             default:
                 $instance = new $className($this->{$this->propertyOfEntityValues});
                 break;
