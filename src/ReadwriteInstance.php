@@ -26,28 +26,8 @@ trait ReadwriteInstance
      * @param MulticastingEntity $instance
      * @param bool
      */
-    public function setInstanceAttribute(MulticastingEntity $instance)
+    public function setInstanceAttribute(MulticastingEntity $instance): bool
     {
         return $this->updateInstance($instance, false);
-    }
-
-    /**
-     * Sets values to the instance and the attribute ($propertyOfEntityValues).
-     *
-     * @param array $values
-     */
-    public function setValuesToInstance(array $values)
-    {
-        /** @var MulticastingEntity|null $instance **/
-        $instance = $this->getInstance();
-
-        // Fills and gets data to update the current value of the property
-        // with normalized data.
-        if ($instance) {
-            $instance->fillFromArray($values);
-            $values = $instance->toArray();
-        }
-
-        $this->{$this->propertyOfEntityValues} = $values;
     }
 }
