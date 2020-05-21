@@ -19,7 +19,7 @@ Use it in your models of Eloquent.
 Install the package using **Composer**:
 
 ```bash
-composer require "dios/multicasting:1.*"
+composer require "diossystem/multicasting:1.*"
 ```
 
 ## Setting model
@@ -137,23 +137,6 @@ protected $entityTypeMapping = [
  * @var string|null
  */
 protected $defaultEntityHandler = \Dios\System\Page\Models\HandlersOfAdditionalFields\DefaultHandler::class;
-
-/**
- * The source that contains an entity type.
- * When set second value, then may to use caching of a result of the search
- * entity key.
- *
- * Format that uses the cache: '<first_value>|<second_value>'
- * The first_value is a path to get an entity key.
- * The second_value is a key for the cache.
- * Example: 'af.type|additional_field_id'
- *
- * Format that do not use the cache: '<value>'.
- * The value is a path to get an entity key or it is a property of the current model.
- * Example: 'code_name'
- *
- * @var string
- */
 }
 ```
 
