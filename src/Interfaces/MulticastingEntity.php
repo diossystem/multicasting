@@ -9,9 +9,9 @@ namespace Dios\System\Multicasting\Interfaces;
 interface MulticastingEntity
 {
     /**
-     * Fills an instance of the class by with values.
-     * May assign default values or throw an exceptions, also may return a state
-     * of the operation.
+     * Fills an instance of the class with values.
+     * May assign default values or throw an exception, also may return a state
+     * of the assigment.
      *
      * @param  array  $array
      */
@@ -19,7 +19,6 @@ interface MulticastingEntity
 
     /**
      * Returns an array with values of the attribute.
-     * The result may be used to save in the database.
      *
      * @return array
      */
