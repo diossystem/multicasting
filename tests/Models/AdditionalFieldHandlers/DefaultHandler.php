@@ -2,12 +2,12 @@
 
 namespace Tests\Models\AdditionalFieldHandlers;
 
-use Dios\System\Multicasting\Interfaces\SimpleEntity;
+use Dios\System\Multicasting\Interfaces\SimpleArrayEntity;
 
 /**
  * Keeps data of AF.
  */
-class DefaultHandler implements SimpleEntity
+class DefaultHandler implements SimpleArrayEntity
 {
     protected $values;
 

@@ -2,12 +2,12 @@
 
 namespace Tests\Models\AdditionalFieldHandlers;
 
-use Dios\System\Multicasting\Interfaces\SimpleEntity;
+use Dios\System\Multicasting\Interfaces\SimpleArrayEntity;
 
 /**
  * Keeps data of images.
  */
-class Images implements SimpleEntity
+class Images implements SimpleArrayEntity
 {
     protected $list;
 

@@ -2,12 +2,12 @@
 
 namespace Tests\Models\AdditionalFieldHandlers;
 
-use Dios\System\Multicasting\Interfaces\SimpleEntity;
+use Dios\System\Multicasting\Interfaces\SimpleArrayEntity;
 
 /**
  * Keeps data of a map.
  */
-class Map implements SimpleEntity
+class Map implements SimpleArrayEntity
 {
     protected $title;
 
@@ -43,7 +43,7 @@ class Map implements SimpleEntity
     /**
      * Sets a new title.
      *
-     * @param string $title 
+     * @param string $title
      */
     public function setTitle(string $title)
     {

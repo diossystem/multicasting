@@ -6,7 +6,7 @@ use AdditionalFieldsTableSeeder;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Models\AdditionalField;
-use Dios\System\Multicasting\Interfaces\SimpleEntity;
+use Dios\System\Multicasting\Interfaces\SimpleArrayEntity;
 use Tests\TestCase;
 
 class AdditionalFieldTest extends TestCase
@@ -41,7 +41,7 @@ class AdditionalFieldTest extends TestCase
         /** @var Page $pageWithAF **/
         $pageWithAF = $this->getFirstPageOfAF('images');
 
-        $this->assertInstanceOf(SimpleEntity::class, $pageWithAF->pivot->getInstance());
+        $this->assertInstanceOf(SimpleArrayEntity::class, $pageWithAF->pivot->getInstance());
     }
 
     /**
@@ -57,7 +57,7 @@ class AdditionalFieldTest extends TestCase
         /** @var Page $pageWithAF **/
         $pageWithAF = $this->getFirstPageOfAF($type);
 
-        /** @var SimpleEntity|null $instance **/
+        /** @var SimpleArrayEntity|null $instance **/
         $instance = $pageWithAF->pivot->instance;
 
         if ($instanceExists) {
@@ -74,7 +74,7 @@ class AdditionalFieldTest extends TestCase
             'map' => [
                 'map',
                 true,
-                SimpleEntity::class,
+                SimpleArrayEntity::class,
                 [
                    'title' => 'This is a map',
                    'address' => '210000, Vitebsk, Belarus',
@@ -180,7 +180,7 @@ class AdditionalFieldTest extends TestCase
         /** @var Page $pageWithMap **/
         $pageWithMap = $this->getFirstPageOfAF('map');
 
-        /** @var SimpleEntity $instance **/
+        /** @var SimpleArrayEntity $instance **/
         $instance = $pageWithMap->pivot->instance;
 
         $this->assertInstanceOf(\Tests\Models\AdditionalFieldHandlers\Map::class, $instance);
@@ -202,7 +202,7 @@ class AdditionalFieldTest extends TestCase
         /** @var Page $pageWithImages **/
         $pageWithImages = $this->getFirstPageOfAF('images');
 
-        /** @var SimpleEntity $instance **/
+        /** @var SimpleArrayEntity $instance **/
         $instance = $pageWithImages->pivot->instance;
 
         $this->assertInstanceOf(\Tests\Models\AdditionalFieldHandlers\Images::class, $instance);
@@ -240,7 +240,7 @@ class AdditionalFieldTest extends TestCase
         /** @var Page $pageWithMap **/
         $pageWithMap = $this->getFirstPageOfAF('map');
 
-        /** @var SimpleEntity $instance **/
+        /** @var SimpleArrayEntity $instance **/
         $instance = $pageWithMap->pivot->instance;
 
         $instance->setTitle('New title');

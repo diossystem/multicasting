@@ -4,6 +4,7 @@ namespace Tests\Models;
 
 use Dios\System\Multicasting\AttributeMulticasting;
 use Dios\System\Multicasting\ReadwriteInstance;
+use Dios\System\Multicasting\Interfaces\SimpleArrayEntity;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -41,11 +42,11 @@ class AdditionalFieldsOfPages extends Pivot
     ];
 
     /**
-     * The property that contains values to an entity.
+     * The property that contains values for an entity.
      *
      * @var string
      */
-    protected $propertyOfEntityValues = 'values';
+    protected $propertyForEntity = 'values';
 
     /**
      * Type mapping of entity types and their handlers.
@@ -83,11 +84,11 @@ class AdditionalFieldsOfPages extends Pivot
     protected $sourceWithEntityType = 'af.type|additional_field_id';
 
     /**
-     * The instance type of entities.
+     * The instance type of entities or their interface.
      *
      * @var string
      */
-    protected $interfaceType = 'instance_from_model';
+    protected $interfaceType = SimpleArrayEntity::class;
 
     /**
      * Returns an additional field of the page.
