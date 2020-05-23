@@ -6,6 +6,11 @@ use Dios\System\Multicasting\Interfaces\MulticastingEntity;
 use Dios\System\Multicasting\Interfaces\EntityWithModel;
 use Dios\System\Multicasting\Interfaces\RelatedEntity;
 use Dios\System\Multicasting\Interfaces\SimpleEntity;
+use Dios\System\Multicasting\Interfaces\SimpleArrayEntity;
+use Dios\System\Multicasting\Interfaces\ArrayEntity;
+use Dios\System\Multicasting\Interfaces\SingleValueEntity;
+use Dios\System\Multicasting\Interfaces\KeepsEntityType;
+use Dios\System\Multicasting\Interfaces\IndependentEntity;
 
 /**
  * The trait handlers models that have only one attribute
@@ -229,32 +234,71 @@ trait AttributeMulticasting
             return null;
         }
 
-        return $this->newInstanceByInterfaceType($className);
+        return $this->prepareNewInstanceOfEntity($className);
     }
 
     /**
-     * Makes a new instance of a class using the interface type.
+     * Makes and configures a new instance of the entity.
      *
      * @param  string $className
      * @return MulticastingEntity|null
      */
-    public function newInstanceByInterfaceType(string $className)
+    public function prepareNewInstanceOfEntity(string $className)
+    {
+        /** @var MulticastingEntity $instance **/
+        $instance = $this->newInstanceByClassNameOfEntity($className);
+        $instance = $this->configureInstance($instance);
+
+        return $instance;
+    }
+
+    /**
+     * Makes a new instance of a class using the interface type
+     * and a class name of the entity.
+     *
+     * @param  string $className
+     * @return MulticastingEntity|null
+     */
+    public function newInstanceByClassNameOfEntity(string $className)
     {
         /** @var string $interfaceType **/
         $interfaceType = $this->getInterfaceTypeOfEntities();
 
         switch ($interfaceType) {
-            case 'related_entity':
+            case 'related_entity': // deprecated
             case RelatedEntity::class:
-            case 'entity_with_model':
+            case 'entity_with_model': // deprecated
             case EntityWithModel::class:
-                $instance = new $className($this, $this->propertyOfEntityValues);
+                $instance = new $className($this, $this->propertyForEntity);
                 break;
-            case 'simple':
+            case 'simple': // deprecated
             case SimpleEntity::class:
-            default:
-                $instance = new $className($this->{$this->propertyOfEntityValues});
+            case SimpleArrayEntity::class:
+                $instance = new $className($this->{$this->propertyForEntity});
                 break;
+            case IndependentEntity::class:
+            default:
+                $instance = new $className;
+                break;
+        }
+
+        return $instance;
+    }
+
+    /**
+     * Configures the instance.
+     *
+     * @param  MulticastingEntity $instance
+     * @return MulticastingEntity
+     */
+    public function configureInstance(MulticastingEntity $instance): MulticastingEntity
+    {
+        if ($instance instanceof SingleValueEntity) {
+            $instance->setValue($this->{$this->propertyForEntity});
+        }
+
+        if ($instance instanceof KeepsEntityType) {
+            $instance->setEntityType($this->getEntityType());
         }
 
         return $instance;
@@ -317,11 +361,16 @@ trait AttributeMulticasting
         $currentInstance = $this->getInstance();
 
         if ($currentInstance) {
-            $this->{$this->propertyOfEntityValues} = $currentInstance->toArray();
+            if ($currentInstance instanceof ArrayEntity) {
+                $this->{$this->propertyForEntity} = $currentInstance->toArray();
+            } elseif ($currentInstance instanceof SingleValueEntity) {
+                $this->{$this->propertyForEntity} = $currentInstance->getValue();
+            }
+
         } else {
-            $this->{$this->propertyOfEntityValues} = null;
+            $this->{$this->propertyForEntity} = null;
         }
 
-        return $this->{$this->propertyOfEntityValues};
+        return $this->{$this->propertyForEntity};
     }
 }
