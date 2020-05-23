@@ -3,14 +3,10 @@
 namespace Dios\System\Multicasting\Interfaces;
 
 /**
- * Uses for initialization an instance by using an array with values.
+ * It used for initialization an instance using an array with values.
+ *
+ * @deprecated It was renamed to SimpleArrayEntity.
  */
-interface SimpleEntity extends MulticastingEntity
+interface SimpleEntity extends SimpleArrayEntity
 {
-    /**
-     * Initializes an instance of the class.
-     *
-     * @param array $array An array with values of the attribute.
-     */
-    public function __construct(array $array);
 }

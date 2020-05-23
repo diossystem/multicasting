@@ -5,7 +5,7 @@ namespace Dios\System\Multicasting\Interfaces;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Uses for initialization an instance of the model
+ * It used for initialization an instance of the model
  * and reads an attribute of the instance.
  */
 interface EntityWithModel extends MulticastingEntity

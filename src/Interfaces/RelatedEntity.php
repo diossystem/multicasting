@@ -5,14 +5,14 @@ namespace Dios\System\Multicasting\Interfaces;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Uses for initialization a reference to the instance of the model.
+ * It used for initialization a reference to the instance of the model.
  * The instance of the class must updates the instance of the model
  * with filled data.
  */
 interface RelatedEntity extends MulticastingEntity
 {
     /**
-     * Initializes an instance of the class.
+     * Initializes an instance of a class.
      *
      * @param Model $instance
      * @param string $attribute An attribute of the model.

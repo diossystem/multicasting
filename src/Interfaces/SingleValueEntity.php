@@ -3,12 +3,12 @@
 namespace Dios\System\Multicasting\Interfaces;
 
 /**
- * Uses for initialization an instance by using a single value.
+ * Is used for initialization an instance that uses a single value.
  */
-interface SingleValueEntity
+interface SingleValueEntity extends MulticastingEntity
 {
     /**
-     * Fills an instance of the class with a value.
+     * Fills an instance of a class with a value.
      * May assign default value or throw an exception, also may return a state
      * of the assigment.
      *
