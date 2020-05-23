@@ -159,11 +159,11 @@ trait AttributeMulticasting
     }
 
     /**
-     * Returns the default entity handler class name.
+     * Returns a class name of the default entity handler.
      *
      * @return string|null
      */
-    public function getDefaultEntityHandlerClassName()
+    public function getClassNameOfDefaultEntityHandler()
     {
         return $this->hasDefaultEntityHandler()
             ? $this->defaultEntityHandler
@@ -172,12 +172,12 @@ trait AttributeMulticasting
     }
 
     /**
-     * Returns an entity handler class name by its type.
+     * Returns a class name of an entity handler by its type.
      *
      * @param  string $type
      * @return string|null
      */
-    public function getEntityHandlerClassNameByType($type)
+    public function getClassNameOfEntityHandlerByType($type)
     {
         return $this->hasEntityType($type)
             ? $this->entityTypeMapping[$type]
@@ -186,14 +186,15 @@ trait AttributeMulticasting
     }
 
     /**
-     * Returns a class name of an entity handler by the type.
+     * Returns a class name of an entity handler by the type
+     * or returns a class name of the default entity handler.
      *
      * @param  string $type
      * @return string|null
      */
-    public function getEntityHandlerClassNameOrDefaultClassName($type)
+    public function getClassNameOfEntityHandlerOrDefaultEntityHandler($type)
     {
-        return $this->getEntityHandlerClassNameByType($type) ?? $this->getDefaultEntityHandlerClassName();
+        return $this->getClassNameOfEntityHandlerByType($type) ?? $this->getClassNameOfDefaultEntityHandler();
     }
 
     /**
@@ -222,22 +223,22 @@ trait AttributeMulticasting
         $type = $this->getEntityType();
 
         /** @var string|null $className **/
-        $className = $this->getEntityHandlerClassNameOrDefaultClassName($type);
+        $className = $this->getClassNameOfEntityHandlerOrDefaultEntityHandler($type);
 
         if (! $className) {
             return null;
         }
 
-        return $this->makeInstanceByInterfaceType($className);
+        return $this->newInstanceByInterfaceType($className);
     }
 
     /**
-     * Makes an instance of the class by using the interface type.
+     * Makes a new instance of a class using the interface type.
      *
      * @param  string $className
      * @return MulticastingEntity|null
      */
-    public function makeInstanceByInterfaceType(string $className)
+    public function newInstanceByInterfaceType(string $className)
     {
         /** @var string $interfaceType **/
         $interfaceType = $this->getInterfaceTypeOfEntities();
@@ -260,7 +261,7 @@ trait AttributeMulticasting
     }
 
     /**
-     * Returns an interface type that using by entities of the class.
+     * Returns an interface type or a class name that using by entities.
      *
      * @return string|null
      */
