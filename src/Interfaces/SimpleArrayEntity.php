@@ -10,7 +10,7 @@ interface SimpleArrayEntity extends ArrayEntity
     /**
      * Initializes an instance of a class.
      *
-     * @param array $array An array with values of the attribute.
+     * @param array|null $array An array with values of the attribute.
      */
-    public function __construct(array $array);
+    public function __construct(array $array = null);
 }
