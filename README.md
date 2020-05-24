@@ -11,7 +11,7 @@ Use it in your models of Eloquent.
 
 **How to do this**:
 - add the traits to your some model;
-- set variables;
+- set values to variables;
 - implement your handlers using base interfaces or your own interfaces.
 
 ## Installation
@@ -43,18 +43,28 @@ class Sheet extends Model
 
 ### Interface type
 
-The next step, you must choose an interface to implement your handlers for data of the attribute the model and configure the variables. The default interface is the simple type (```Dios\System\Multicasting\Interfaces\SimpleEntity```).
+The next step, you must choose an interface to implement your handlers for data of the attribute the model and configure the variables.
+
+The default interface for initialization is ```Dios\System\Multicasting\Interfaces\IndependentEntity```.
 
 Each interface has its own features.
 
-**The base types and their interfaces**:
-- ``simple`` - ```Dios\System\Multicasting\Interfaces\SimpleEntity```;
-- ``related_entity`` - ```Dios\System\Multicasting\Interfaces\RelatedEntity```;
-- ``entity_with_model`` - ```Dios\System\Multicasting\Interfaces\EntityWithModel```.
+**The base interfaces for initialization**:
+- ```Dios\System\Multicasting\Interfaces\IndependentEntity```;
+- ```Dios\System\Multicasting\Interfaces\SimpleSingleValueEntity```;
+- ```Dios\System\Multicasting\Interfaces\SimpleArrayEntity```;
+- ```Dios\System\Multicasting\Interfaces\RelatedEntity```;
+- ```Dios\System\Multicasting\Interfaces\EntityWithModel```.
+
+**The base interfaces for filling**:
+- ```Dios\System\Multicasting\Interfaces\ArrayEntity```;
+- ```Dios\System\Multicasting\Interfaces\SingleValueEntity```;
+- ```Dios\System\Multicasting\Interfaces\KeepsEntityType```.
+
 
 All these interfaces extended from ```Dios\System\Multicasting\Interfaces\MulticastingEntity```.
 
-It contains two methods:
+The ```Dios\System\Multicasting\Interfaces\ArrayEntity``` interface contains two methods:
 - ```fillFromArray(array $array)``` - it uses to fill the current instance from using an array;
 - ```toArray(): array``` - it uses to get an array to save its in your DB.
 
@@ -65,12 +75,14 @@ Assign your chosen interface type to ```$interfaceType``` in your model.
 **Example #2**
 
 ```php
+use Dios\System\Multicasting\Interfaces\SimpleArrayEntity;
+
 /**
  * The instance type of entities.
  *
  * @var string
  */
-protected $interfaceType = 'simple';
+protected $interfaceType = SimpleArrayEntity::class;
 }
 ```
 
@@ -146,9 +158,9 @@ The default handler is optional.
 
 These handlers must implement the MulticastingEntity interface.
 
-### Property containing values
+### Property containing a value
 
-You must define the ```$propertyOfEntityValues``` variable. It contains a property of the model to get values for instances of entities (handlers). It is used during initialization an instances.
+You must define the ```$propertyForEntity``` variable. It contains a property of the model to get values for instances of entities (handlers). It is used during initialization an instances.
 
 
 ```php
@@ -157,7 +169,7 @@ You must define the ```$propertyOfEntityValues``` variable. It contains a proper
  *
  * @var string
  */
-protected $propertyOfEntityValues = 'values';
+protected $propertyForEntity = 'values';
 ```
 
 Often your property will be belong to the 'array' type.
