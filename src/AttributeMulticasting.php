@@ -11,6 +11,9 @@ use Dios\System\Multicasting\Interfaces\ArrayEntity;
 use Dios\System\Multicasting\Interfaces\SingleValueEntity;
 use Dios\System\Multicasting\Interfaces\KeepsEntityType;
 use Dios\System\Multicasting\Interfaces\IndependentEntity;
+use Dios\System\Multicasting\Exceptions\UndefinedSourceOfType;
+use Dios\System\Multicasting\Exceptions\UndefinedPropertyForEntities;
+use Dios\System\Multicasting\Exceptions\DifferentTypesOfEntities;
 
 /**
  * The trait handlers models that have only one attribute
@@ -40,6 +43,8 @@ trait AttributeMulticasting
      */
     public function getEntityType(bool $cache = true)
     {
+        $this->throwExceptionWhenUndefinedSourceOfType();
+
         /** @var array $sources **/
         $sources = explode('|', $this->sourceWithEntityType, 2);
 
@@ -247,7 +252,10 @@ trait AttributeMulticasting
     {
         /** @var MulticastingEntity $instance **/
         $instance = $this->newInstanceByClassNameOfEntity($className);
-        $instance = $this->configureInstance($instance);
+
+        if (isset($this->configureInstanceOfEntity) && $this->configureInstanceOfEntity) {
+            $instance = $this->configureInstance($instance);
+        }
 
         return $instance;
     }
@@ -269,11 +277,13 @@ trait AttributeMulticasting
             case RelatedEntity::class:
             case 'entity_with_model': // deprecated
             case EntityWithModel::class:
+                $this->throwExceptionWhenUndefinedPropertyForEntities();
                 $instance = new $className($this, $this->propertyForEntity);
                 break;
             case 'simple': // deprecated
             case SimpleEntity::class:
             case SimpleArrayEntity::class:
+                $this->throwExceptionWhenUndefinedPropertyForEntities();
                 $instance = new $className($this->{$this->propertyForEntity});
                 break;
             case IndependentEntity::class:
@@ -286,22 +296,41 @@ trait AttributeMulticasting
     }
 
     /**
-     * Configures the instance.
+     * Configures the instance. Fills data from the property to the instance.
      *
      * @param  MulticastingEntity $instance
      * @return MulticastingEntity
      */
     public function configureInstance(MulticastingEntity $instance): MulticastingEntity
     {
-        if ($instance instanceof SingleValueEntity) {
-            $instance->setValue($this->{$this->propertyForEntity});
-        }
-
         if ($instance instanceof KeepsEntityType) {
             $instance->setEntityType($this->getEntityType());
         }
 
+        if (isset($this->fillInstanceOfEntity) && $this->fillInstanceOfEntity) {
+            $instance = $this->fillInstanceOfEntity($instance);
+        }
+
         return $instance;
+    }
+
+    /**
+     * Fills an instance of the entity with data from the property.
+     *
+     * @param  MulticastingEntity $instance
+     * @return MulticastingEntity
+     */
+    public function fillInstanceOfEntity(MulticastingEntity $instance): MulticastingEntity
+    {
+        $this->throwExceptionWhenUndefinedPropertyForEntities();
+
+        if ($instance instanceof SingleValueEntity) {
+            $instance->setValue($this->{$this->propertyForEntity});
+        }
+
+        if ($instance instanceof ArrayEntity) {
+            $instance->fillFromArray($this->{$this->propertyForEntity});
+        }
     }
 
     /**
@@ -321,7 +350,7 @@ trait AttributeMulticasting
      * @param  MulticastingEntity $instance
      * @param  bool               $throwException
      *
-     * @throws Exception
+     * @throws DifferentTypesOfEntities
      */
     public function updateInstance($instance, bool $throwException = true): bool
     {
@@ -338,7 +367,7 @@ trait AttributeMulticasting
 
         if (! ($instance instanceof $classNameOfCurrentInstance)) {
             if ($throwException) {
-                throw new \Exception('The given instance has another type in comparison with the current instance.');
+                throw new DifferentTypesOfEntities;
             }
 
             return false;
@@ -358,6 +387,8 @@ trait AttributeMulticasting
      */
     public function syncInstanceWithProperty()
     {
+        $this->throwExceptionWhenUndefinedPropertyForEntities();
+
         $currentInstance = $this->getInstance();
 
         if ($currentInstance) {
@@ -372,5 +403,33 @@ trait AttributeMulticasting
         }
 
         return $this->{$this->propertyForEntity};
+    }
+
+    /**
+     * Throws the exception when the source was not assigned.
+     *
+     * @return void
+     *
+     * @throws UndefinedSourceOfType
+     */
+    public function throwExceptionWhenUndefinedSourceOfType()
+    {
+        if (! isset($this->sourceWithEntityType)) {
+            throw new UndefinedSourceOfType;
+        }
+    }
+
+    /**
+     * Throws the exception when the property for entity was not assigned.
+     *
+     * @return void
+     *
+     * @throws UndefinedPropertyForEntities
+     */
+    public function throwExceptionWhenUndefinedPropertyForEntities()
+    {
+        if (! isset($this->propertyForEntity)) {
+            throw new UndefinedPropertyForEntities;
+        }
     }
 }

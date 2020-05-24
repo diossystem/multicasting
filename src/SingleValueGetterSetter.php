@@ -4,6 +4,7 @@ namespace Dios\System\Multicasting;
 
 use Dios\System\Multicasting\Interfaces\MulticastingEntity;
 use Dios\System\Multicasting\Interfaces\SingleValueEntity;
+use Dios\System\Multicasting\Exceptions\InvalidTypeOfInstance;
 
 /**
  * Getter and setter for entities with arrays.
@@ -17,6 +18,8 @@ trait SingleValueGetterSetter
      */
     public function getValueFromInstance()
     {
+        $this->throwExceptionWhenUndefinedPropertyForEntities();
+
         /** @var MulticastingEntity|SingleValueEntity|null $instance **/
         $instance = $this->getInstance();
 
@@ -48,6 +51,8 @@ trait SingleValueGetterSetter
             $value = $instance->getValue();
         }
 
+        $this->throwExceptionWhenUndefinedPropertyForEntities();
+
         $this->{$this->propertyForEntity} = $value;
     }
 
@@ -56,12 +61,12 @@ trait SingleValueGetterSetter
      *
      * @param MulticastingEntity $instance
      *
-     * @throws Exception
+     * @throws InvalidTypeOfInstance
      */
     public function throwExceptionWhenInvalidInterface(MulticastingEntity $instance): void
     {
         if (! ($instance instanceof SingleValueEntity)) {
-            throw new \Exception('The given instance is invalid interface. The instance must be implements ' . SingleValueEntity::class);
+            throw new InvalidTypeOfInstance(SingleValueEntity::class);
         }
     }
 }

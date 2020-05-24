@@ -4,6 +4,7 @@ namespace Dios\System\Multicasting;
 
 use Dios\System\Multicasting\Interfaces\MulticastingEntity;
 use Dios\System\Multicasting\Interfaces\ArrayEntity;
+use Dios\System\Multicasting\Exceptions\InvalidTypeOfInstance;
 
 /**
  * Getter and setter for entities with arrays.
@@ -17,6 +18,8 @@ trait ArrayGetterSetter
      */
     public function getValuesFromInstance(): array
     {
+        $this->throwExceptionWhenUndefinedPropertyForEntities();
+
         /** @var MulticastingEntity|ArrayEntity|null $instance **/
         $instance = $this->getInstance();
 
@@ -48,6 +51,8 @@ trait ArrayGetterSetter
             $values = $instance->toArray();
         }
 
+        $this->throwExceptionWhenUndefinedPropertyForEntities();
+
         $this->{$this->propertyForEntity} = $values;
     }
 
@@ -56,12 +61,12 @@ trait ArrayGetterSetter
      *
      * @param MulticastingEntity $instance
      *
-     * @throws Exception
+     * @throws InvalidTypeOfInstance
      */
     public function throwExceptionWhenInvalidInterface(MulticastingEntity $instance): void
     {
         if (! ($instance instanceof ArrayEntity)) {
-            throw new \Exception('The given instance is invalid interface. The instance must be implements ' . ArrayEntity::class);
+            throw new InvalidTypeOfInstance(ArrayEntity::class);
         }
     }
 }
