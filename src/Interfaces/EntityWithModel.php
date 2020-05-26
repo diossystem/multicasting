@@ -11,12 +11,11 @@ use Illuminate\Database\Eloquent\Model;
 interface EntityWithModel extends MulticastingEntity
 {
     /**
-     * Initializes an instance from the model and its attribute.
+     * Initializes an instance from a model.
      *
-     * @param Model  $instance
-     * @param string $attribute An attribute of the model.
+     * @param Model $instance
      */
-    public function __construct(Model $instance, string $attribute);
+    public function __construct(Model $instance);
 
     /**
      * Returns the current model of the instance.
@@ -24,11 +23,4 @@ interface EntityWithModel extends MulticastingEntity
      * @return Model
      */
     public function getModel(): Model;
-
-    /**
-     * Returns an attribute name.
-     *
-     * @return string
-     */
-    public function getAttribteName(): string;
 }

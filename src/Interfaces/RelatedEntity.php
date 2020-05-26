@@ -5,7 +5,7 @@ namespace Dios\System\Multicasting\Interfaces;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * It used for initialization a reference to the instance of the model.
+ * It used for initialization a reference to the instance of a model.
  * The instance of the class must updates the instance of the model
  * with filled data.
  */
@@ -15,9 +15,8 @@ interface RelatedEntity extends MulticastingEntity
      * Initializes an instance of a class.
      *
      * @param Model $instance
-     * @param string $attribute An attribute of the model.
      */
-    public function __construct(Model &$instance, string $attribute);
+    public function __construct(Model &$instance);
 
     /**
      * Returns the current model of the instance.
@@ -32,13 +31,6 @@ interface RelatedEntity extends MulticastingEntity
      * @return Model
      */
     public function &getReference(): Model;
-
-    /**
-     * Returns an attribute name.
-     *
-     * @return string
-     */
-    public function getAttribteName(): string;
 
     /**
      * Saves an instance with the current values.

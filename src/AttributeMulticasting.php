@@ -278,7 +278,7 @@ trait AttributeMulticasting
             case 'entity_with_model': // deprecated
             case EntityWithModel::class:
                 $this->throwExceptionWhenUndefinedPropertyForEntities();
-                $instance = new $className($this, $this->propertyForEntity);
+                $instance = new $className($this);
                 break;
             case 'simple': // deprecated
             case SimpleEntity::class:
@@ -305,6 +305,10 @@ trait AttributeMulticasting
     {
         if ($instance instanceof KeepsEntityType) {
             $instance->setEntityType($this->getEntityType());
+        }
+
+        if ($instance instanceof KeepsAttributeName) {
+            $instance->setAttributeName($this->propertyForEntity);
         }
 
         if (isset($this->fillInstanceOfEntity) && $this->fillInstanceOfEntity) {
