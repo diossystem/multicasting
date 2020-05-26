@@ -174,7 +174,7 @@ class Sheet extends Model
 }
 ```
 
-To adds atypical values to your instances during initialization you must extend or replace ```fillInstanceOfEntity()``` in your model.
+To add atypical values to your instances during initialization you must extend or replace ```fillInstanceOfEntity()``` in your model.
 
 **Example #4. A custom interface to set values**
 
@@ -288,7 +288,7 @@ You must define the ```$propertyForEntity``` variable. It contains a property of
 
 ```php
 /**
- * The property that contains values to an entity.
+ * The property that contains values for entities.
  *
  * @var string
  */
@@ -309,3 +309,7 @@ protected $casts = [
 ```
 
 You may use any type and values of the property will be passed to a new instance of the entity.
+
+<hr>
+
+License: [MIT](https://github.com/diossystem/multicasting/blob/master/LICENSE)
