@@ -24,7 +24,7 @@ composer require "diossystem/multicasting:1.*"
 
 ## Setting model
 
-### Using trait
+### Using the trait
 
 To use these features you need to add the trait to your model.
 
@@ -45,30 +45,73 @@ class Sheet extends Model
 
 The next step, you must choose an interface to implement your handlers for data of the attribute the model and configure the variables.
 
-The default interface for initialization is ```Dios\System\Multicasting\Interfaces\IndependentEntity```.
+The default interface for initialization is ```\Dios\System\Multicasting\Interfaces\IndependentEntity```.
 
 Each interface has its own features.
 
 **The base interfaces for initialization**:
-- ```Dios\System\Multicasting\Interfaces\IndependentEntity```;
-- ```Dios\System\Multicasting\Interfaces\SimpleSingleValueEntity```;
-- ```Dios\System\Multicasting\Interfaces\SimpleArrayEntity```;
-- ```Dios\System\Multicasting\Interfaces\RelatedEntity```;
-- ```Dios\System\Multicasting\Interfaces\EntityWithModel```.
+- [\Dios\System\Multicasting\Interfaces\IndependentEntity](https://github.com/diossystem/multicasting/blob/master/src/Interfaces/IndependentEntity.php) - it has no parameters.
+- [\Dios\System\Multicasting\Interfaces\SimpleSingleValueEntity](https://github.com/diossystem/multicasting/blob/master/src/Interfaces/SimpleSingleValueEntity.php) - it has one parameter - one value of the model;
+- [\Dios\System\Multicasting\Interfaces\SimpleArrayEntity](https://github.com/diossystem/multicasting/blob/master/src/Interfaces/SimpleArrayEntity.php) - it has one parameter - an array with values of the model;
+- [\Dios\System\Multicasting\Interfaces\RelatedEntity](https://github.com/diossystem/multicasting/blob/master/src/Interfaces/RelatedEntity.php) - it has one parameter - an instance of the model;
+- [\Dios\System\Multicasting\Interfaces\EntityWithModel](https://github.com/diossystem/multicasting/blob/master/src/Interfaces/EntityWithModel.php) it has one parameter - an instance of the model.
 
 **The base interfaces for filling**:
-- ```Dios\System\Multicasting\Interfaces\ArrayEntity```;
-- ```Dios\System\Multicasting\Interfaces\SingleValueEntity```;
-- ```Dios\System\Multicasting\Interfaces\KeepsEntityType```.
+- [\Dios\System\Multicasting\Interfaces\ArrayEntity](https://github.com/diossystem/multicasting/blob/master/src/Interfaces/ArrayEntity.php)- it is used for filling and getting an array with values.
+
+```php
+/** @var MulticastingEntity|ArrayEntity **/
+$instance = $model->getInstance();
+
+$instance->fillFromArray($values);
+
+/** @var array $values **/
+$values = $instance->toArray();
+```
+
+- [\Dios\System\Multicasting\Interfaces\SingleValueEntity](https://github.com/diossystem/multicasting/blob/master/src/Interfaces/SingleValueEntity.php) - it is used for assigning and getting a value;
+
+```php
+/** @var MulticastingEntity|SingleValueEntity **/
+$instance = $model->getInstance();
+
+$instance->setValue($value);
+
+/** @var mixed $value **/
+$value = $instance->getValue(); // returns any value
+```
+
+- [\Dios\System\Multicasting\Interfaces\KeepsEntityType](https://github.com/diossystem/multicasting/blob/master/src/Interfaces/KeepsEntityType.php) - it is used for assigning and getting an entity type.
 
 
-All these interfaces extended from ```Dios\System\Multicasting\Interfaces\MulticastingEntity```.
+```php
+/** @var MulticastingEntity|KeepsEntityType **/
+$instance = $model->getInstance();
 
-The ```Dios\System\Multicasting\Interfaces\ArrayEntity``` interface contains two methods:
-- ```fillFromArray(array $array)``` - it uses to fill the current instance from using an array;
-- ```toArray(): array``` - it uses to get an array to save its in your DB.
+/** @var string $type **/
+$type = $instance->getEntityType();
 
-When you need to use your own interface or another interface it must implement ```Dios\System\Multicasting\Interfaces\MulticastingEntity```.
+// A type is assigned during initialization, if it is configured
+$instance->setEntityType($this->getEntityType()); // it is called from the model
+```
+
+- [\Dios\System\Multicasting\Interfaces\KeepsAttributeName](https://github.com/diossystem/multicasting/blob/master/src/Interfaces/KeepsAttributeName.php) - it is used for assigning and getting an attribute name.
+
+
+```php
+/** @var MulticastingEntity|KeepsAttributeName **/
+$instance = $model->getInstance();
+
+/** @var string $name **/
+$name = $instance->getAttributeName();
+
+// A name is assigned during initialization, if it is configured
+$instance->setAttributeName($this->{$this->propertyForEntity}); // it is called from the model
+```
+
+All these interfaces are extended from [\Dios\System\Multicasting\Interfaces\MulticastingEntity](https://github.com/diossystem/multicasting/blob/master/src/Interfaces/MulticastingEntity.php).
+
+When you need to use your own interface or another interface it must implement ```\Dios\System\Multicasting\Interfaces\MulticastingEntity```.
 
 Assign your chosen interface type to ```$interfaceType``` in your model.
 
@@ -86,7 +129,87 @@ protected $interfaceType = SimpleArrayEntity::class;
 }
 ```
 
-Using not vendor interfaces you must extends or replace the base implementation of the ```makeInstanceByInterfaceType()``` function. This function implements choice an appropriate interface to initialize an instance of a class.
+If you uses not vendor interfaces you must extend or replace the base implementation of the ```newInstanceByClassNameOfEntity()``` function. This function implements choice an appropriate schema to initialize an instance of a class.
+
+**Example #3. Custom interfaces**
+
+```php
+use App\Models\EntitiesOfSheets\TypeOfSheet; // your own interface
+use Illuminate\Database\Eloquent\Model;
+
+class Sheet extends Model
+{
+    use AttributeMulticasting {
+        // Set another name to the function of the trait
+        newInstanceByClassNameOfEntity as newInstanceFromTrait;
+    }
+
+    /**
+     * The instance type of entities.
+     *
+     * @var string
+     */
+    protected $interfaceType = TypeOfSheet::class;
+
+    /**
+     * Makes a new instance of a class using the interface type
+     * and a class name of the entity.
+     *
+     * @param  string $className
+     * @return MulticastingEntity|null
+     */
+    public function newInstanceByClassNameOfEntity(string $className)
+    {
+        /** @var string $interfaceType **/
+        $interfaceType = $this->getInterfaceTypeOfEntities();
+
+        if ($interfaceType === TypeOfSheet::class) {
+            // The custom interface and atypical arguments are used here
+            $instance = new $className($this->height, $this->height);
+        } else {
+            // In another case there will be call a function from the trait
+            $instance = $this->newInstanceFromTrait($className);
+        }
+    }
+}
+```
+
+To adds atypical values to your instances during initialization you must extend or replace ```fillInstanceOfEntity()``` in your model.
+
+**Example #4. A custom interface to set values**
+
+```php
+use App\Models\EntitiesOfSheets\KeepsSize; // your own interface
+use Illuminate\Database\Eloquent\Model;
+
+class Sheet extends Model
+{
+    use AttributeMulticasting {
+        // Set another name to the function of the trait
+        fillInstanceOfEntity as fillInstanceInTrait;
+    }
+
+    /**
+     * Fills an instance of the entity with data from the property.
+     *
+     * @param  MulticastingEntity $instance
+     * @return MulticastingEntity
+     */
+    public function fillInstanceOfEntity(MulticastingEntity $instance): MulticastingEntity
+    {
+        // Sets values from the model
+        if ($instance instanceof KeepsSize) {
+            $instance->setSize($this->height, $this->width);
+            // or
+            $instance->setHeight($this->height);
+            $instance->setWidth($this->width);
+        }
+
+        // Uses the function of the trait
+        $this->fillInstanceInTrait();
+    }
+}
+```
 
 ### Source of a type
 
@@ -94,7 +217,7 @@ The next step, you must assign a source to get the current type of entities. Typ
 
 Use ```$sourceWithEntityType``` to assign your source.
 
-**Example #4. The double value**
+**Example #5. The double value**
 
 ```php
 /**
@@ -131,7 +254,7 @@ The first value is the source of a type. ```af``` is the relation name and ```ty
 
 The next step, you must define handles of entities for allowable types.
 
-**Example #5**
+**Example #6**
 
 ```php
 /**
