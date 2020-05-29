@@ -5,7 +5,7 @@ namespace Dios\System\Multicasting\Exceptions;
 /**
  * The exception for an invalid type of instance.
  */
-class InvalidTypeOfInstance extends Exception
+class InvalidTypeOfInstance extends \Exception
 {
     /**
      * The message of the exception.
@@ -29,18 +29,19 @@ class InvalidTypeOfInstance extends Exception
     public function __construct(string $className = null)
     {
         $this->className = $className;
+    
+        if (isset($this->className)) {
+            $this->message .= ' The instance must be implements ' . $this->className;
+        }            
     }
 
     /**
-     * Returns a message with the error.
+     * Returns a class name to implement.
      *
-     * @return string
+     * @return string|null
      */
-    public function getMessage(): string
+    public function getClassName()
     {
-        return isset($this->className)
-            ? $this->message . ' The instance must be implements ' . $this->className
-            : $this->message
-        ;
+        return $this->className;
     }
 }

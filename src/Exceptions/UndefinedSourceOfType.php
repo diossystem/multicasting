@@ -5,7 +5,7 @@ namespace Dios\System\Multicasting\Exceptions;
 /**
  * The exception for an undefined source of a type.
  */
-class UndefinedSourceOfType extends Exception
+class UndefinedSourceOfType extends \Exception
 {
     /**
      * The message of the exception.

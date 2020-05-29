@@ -5,7 +5,7 @@ namespace Dios\System\Multicasting\Exceptions;
 /**
  * The exception for an undefined property for entities.
  */
-class UndefinedPropertyForEntities extends Exception
+class UndefinedPropertyForEntities extends \Exception
 {
     /**
      * The message of the exception.

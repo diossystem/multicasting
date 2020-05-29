@@ -5,7 +5,7 @@ namespace Dios\System\Multicasting\Exceptions;
 /**
  * The exception for different types of entities.
  */
-class DifferentTypesOfEntities extends Exception
+class DifferentTypesOfEntities extends \Exception
 {
     /**
      * The message of the exception.
