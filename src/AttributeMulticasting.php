@@ -277,7 +277,6 @@ trait AttributeMulticasting
             case RelatedEntity::class:
             case 'entity_with_model': // deprecated
             case EntityWithModel::class:
-                $this->throwExceptionWhenUndefinedPropertyForEntities();
                 $instance = new $className($this);
                 break;
             case 'simple': // deprecated
