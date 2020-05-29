@@ -48,6 +48,23 @@ class Sheet extends Model
     protected $interfaceType = \Dios\System\Multicasting\Interfaces\EntityWithModel::class;
 
     /**
+     * The source that contains an entity type.
+     * 
+     * @var string
+     */
+    protected $sourceWithEntityType = 'type';
+
+    /**
+     * Type mapping of entity types and their handlers.
+     *
+     * @var array
+     */
+    protected $entityTypeMapping = [
+        self::SINGLE_TYPE => \Tests\Models\SheetTypes\SingleType::class,
+        self::ROLL_PAPER_TYPE => \Tests\Models\SheetTypes\RollPaperType::class,
+    ];
+
+    /**
      * Returns sheets with the given type.
      *
      * @param  Builder $query
