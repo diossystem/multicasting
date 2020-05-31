@@ -334,6 +334,8 @@ trait AttributeMulticasting
         if ($instance instanceof ArrayEntity) {
             $instance->fillFromArray($this->{$this->propertyForEntity});
         }
+
+        return $instance;
     }
 
     /**
