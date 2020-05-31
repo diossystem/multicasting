@@ -51,6 +51,26 @@ class RollPaperType implements EntityWithModel
     }
 
     /**
+     * Returns an available height.
+     *
+     * @return int
+     */
+    public function getAvailableHeight(): int
+    {
+        return $this->getHeight() - $this->getTopMargin() - $this->getBottomMargin();
+    }
+
+    /**
+     * Returns an available width.
+     *
+     * @return int
+     */
+    public function getAvailableWidth(): int
+    {
+        return $this->getWidth() - $this->getLeftMargin() - $this->getRightMargin();
+    }
+
+    /**
      * Returns a top margin of the model.
      *
      * @return int
@@ -98,5 +118,20 @@ class RollPaperType implements EntityWithModel
     public function getIndent(): int
     {
         return $this->model->properties['indent'] ?? 0;
+    }
+
+    /**
+     * Checks whether the sheet can contain a product that have the given size.
+     *
+     * @param  int  $height
+     * @param  int  $width
+     * @return bool
+     */
+    public function canContain(int $height, int $width): bool
+    {
+        return $height >= 1
+            && $width >= 1
+            && $this->getAvailableHeight() >= $height
+            && $this->getAvailableWidth() >= $width;
     }
 }

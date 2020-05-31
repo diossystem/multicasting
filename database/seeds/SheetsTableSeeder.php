@@ -29,7 +29,7 @@ class SheetsTableSeeder extends Seeder
             'type' => Sheet::ROLL_PAPER_TYPE,
             'name' => 'Roll of paper',
             'height' => 200000,
-            'width' => 200,
+            'width' => 15000,
             'properties' => [
                 'margin_top' => 10,
                 'margin_bottom' => 10,
