@@ -53,10 +53,19 @@ class SheetTest extends TestCase
         /** @var Sheet $sheet **/
         $sheet = $this->getSheetByType(Sheet::SINGLE_TYPE);
 
-        /** @var EntityWithModel $instance **/
+        /** @var EntityWithModel|SingleType $instance **/
         $instance = $sheet->instance;
 
         $this->assertInstanceOf(SingleType::class, $instance);
+
+        $this->assertEquals(150, $instance->getWidth());
+        $this->assertEquals(200, $instance->getHeight());
+        $this->assertEquals(10, $instance->getTopMargin());
+        $this->assertEquals(15, $instance->getBottomMargin());
+        $this->assertEquals(30, $instance->getLeftMargin());
+        $this->assertEquals(20, $instance->getRightMargin());
+
+        // TODO calculation
     }
 
     public function testInstanceOfRollPaperType()
@@ -64,10 +73,20 @@ class SheetTest extends TestCase
         /** @var Sheet $sheet **/
         $sheet = $this->getSheetByType(Sheet::ROLL_PAPER_TYPE);
 
-        /** @var EntityWithModel $instance **/
+        /** @var EntityWithModel|RollPaperType $instance **/
         $instance = $sheet->instance;
 
         $this->assertInstanceOf(RollPaperType::class, $instance);
+
+        $this->assertEquals(200, $instance->getWidth());
+        $this->assertEquals(200000, $instance->getHeight());
+        $this->assertEquals(10, $instance->getTopMargin());
+        $this->assertEquals(10, $instance->getBottomMargin());
+        $this->assertEquals(10, $instance->getLeftMargin());
+        $this->assertEquals(10, $instance->getRightMargin());
+        $this->assertEquals(10, $instance->getIndent());
+
+        // TODO calculation
     }
 
     public function testInstanceOfNonstandardType()
@@ -79,6 +98,8 @@ class SheetTest extends TestCase
         $instance = $sheet->instance;
 
         $this->assertNull($instance);
+
+        // check the array
     }
 
     public function getSheetByType(string $type)

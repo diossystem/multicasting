@@ -29,4 +29,74 @@ class RollPaperType implements EntityWithModel
     {
         return $this->model;
     }
+
+    /**
+     * Returns a height of the model.
+     *
+     * @return int
+     */
+    public function getHeight(): int
+    {
+        return $this->model->height;
+    }
+
+    /**
+     * Returns a width of the model.
+     *
+     * @return int
+     */
+    public function getWidth(): int
+    {
+        return $this->model->width;
+    }
+
+    /**
+     * Returns a top margin of the model.
+     *
+     * @return int
+     */
+    public function getTopMargin(): int
+    {
+        return $this->model->properties['margin_top'] ?? 0;
+    }
+
+    /**
+     * Returns a bottom margin of the model.
+     *
+     * @return int
+     */
+    public function getBottomMargin(): int
+    {
+        return $this->model->properties['margin_bottom'] ?? 0;
+    }
+
+    /**
+     * Returns a left margin of the model.
+     *
+     * @return int
+     */
+    public function getLeftMargin(): int
+    {
+        return $this->model->properties['margin_left'] ?? 0;
+    }
+
+    /**
+     * Returns a right margin of the model.
+     *
+     * @return int
+     */
+    public function getRightMargin(): int
+    {
+        return $this->model->properties['margin_right'] ?? 0;
+    }
+
+    /**
+     * Returns an indent.
+     *
+     * @return int
+     */
+    public function getIndent(): int
+    {
+        return $this->model->properties['indent'] ?? 0;
+    }
 }
