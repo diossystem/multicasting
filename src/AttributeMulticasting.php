@@ -10,6 +10,7 @@ use Dios\System\Multicasting\Interfaces\SimpleArrayEntity;
 use Dios\System\Multicasting\Interfaces\ArrayEntity;
 use Dios\System\Multicasting\Interfaces\SingleValueEntity;
 use Dios\System\Multicasting\Interfaces\KeepsEntityType;
+use Dios\System\Multicasting\Interfaces\KeepsAttributeName;
 use Dios\System\Multicasting\Interfaces\IndependentEntity;
 use Dios\System\Multicasting\Exceptions\UndefinedSourceOfType;
 use Dios\System\Multicasting\Exceptions\UndefinedPropertyForEntities;
@@ -250,10 +251,10 @@ trait AttributeMulticasting
      */
     public function prepareNewInstanceOfEntity(string $className)
     {
-        /** @var MulticastingEntity $instance **/
+        /** @var MulticastingEntity|null $instance **/
         $instance = $this->newInstanceByClassNameOfEntity($className);
 
-        if (isset($this->configureInstanceOfEntity) && $this->configureInstanceOfEntity) {
+        if ($instance && isset($this->configureInstanceOfEntity) && $this->configureInstanceOfEntity) {
             $instance = $this->configureInstance($instance);
         }
 
@@ -297,7 +298,7 @@ trait AttributeMulticasting
     /**
      * Configures the instance. Fills data from the property to the instance.
      *
-     * @param  MulticastingEntity $instance
+     * @param  MulticastingEntity|KeepsEntityType|KeepsAttributeName $instance
      * @return MulticastingEntity
      */
     public function configureInstance(MulticastingEntity $instance): MulticastingEntity
@@ -363,7 +364,7 @@ trait AttributeMulticasting
         $currentInstance = $this->getInstance();
 
         if (! $currentInstance) {
-            // Exception Undefined current instance
+            // TODO: Exception Undefined current instance
             return false;
         }
 
