@@ -8,6 +8,8 @@ use Dios\System\Multicasting\Exceptions\InvalidTypeOfInstance;
 
 /**
  * Getter and setter for entities with arrays.
+ * 
+ * @mixin AttributeMulticasting
  */
 trait ArrayGetterSetter
 {

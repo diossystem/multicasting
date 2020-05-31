@@ -6,6 +6,8 @@ use Dios\System\Multicasting\Interfaces\MulticastingEntity;
 
 /**
  * Implements getting and setting instances of entities.
+ * 
+ * @mixin AttributeMulticasting
  */
 trait ReadwriteInstance
 {
