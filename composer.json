@@ -2,7 +2,7 @@
     "name": "diossystem/multicasting",
     "description": "Multicasting for attributes of Laravel models. One attribute of a model can have many types.",
     "type": "library",
-    "keywords": ["casting", "cast", "attribute", "model", "eloquent", "laravel", "custom", "mutator", "multitype"],
+    "keywords": ["casting", "cast", "attribute", "model", "eloquent", "laravel", "custom", "mutator", "multitype", "type"],
     "license": "MIT",
     "authors": [
         {
