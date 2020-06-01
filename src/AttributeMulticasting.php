@@ -12,6 +12,7 @@ use Dios\System\Multicasting\Interfaces\SingleValueEntity;
 use Dios\System\Multicasting\Interfaces\KeepsEntityType;
 use Dios\System\Multicasting\Interfaces\KeepsAttributeName;
 use Dios\System\Multicasting\Interfaces\IndependentEntity;
+use Dios\System\Multicasting\Exceptions\UndefinedCurrentInstance;
 use Dios\System\Multicasting\Exceptions\UndefinedSourceOfType;
 use Dios\System\Multicasting\Exceptions\UndefinedPropertyForEntities;
 use Dios\System\Multicasting\Exceptions\DifferentTypesOfEntities;
@@ -364,7 +365,10 @@ trait AttributeMulticasting
         $currentInstance = $this->getInstance();
 
         if (! $currentInstance) {
-            // TODO: Exception Undefined current instance
+            if ($throwException) {
+                throw new UndefinedCurrentInstance;
+            }
+            
             return false;
         }
 
