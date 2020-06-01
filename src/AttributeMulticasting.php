@@ -357,9 +357,10 @@ trait AttributeMulticasting
      * @param  MulticastingEntity $instance
      * @param  bool               $throwException
      *
-     * @throws DifferentTypesOfEntities
+     * @throws UndefinedCurrentInstance If the current instance is undefined.
+     * @throws DifferentTypesOfEntities If the current instance and the given instance are different types.
      */
-    public function updateInstance($instance, bool $throwException = true): bool
+    public function updateInstance(MulticastingEntity $instance, bool $throwException = true): bool
     {
         /** @var MulticastingEntity|null $currentInstance **/
         $currentInstance = $this->getInstance();
@@ -420,7 +421,7 @@ trait AttributeMulticasting
      *
      * @return void
      *
-     * @throws UndefinedSourceOfType
+     * @throws UndefinedSourceOfType If $sourceWithEntityType is null.
      */
     public function throwExceptionWhenUndefinedSourceOfType()
     {
@@ -434,7 +435,7 @@ trait AttributeMulticasting
      *
      * @return void
      *
-     * @throws UndefinedPropertyForEntities
+     * @throws UndefinedPropertyForEntities If $propertyForEntity is null.
      */
     public function throwExceptionWhenUndefinedPropertyForEntities()
     {
