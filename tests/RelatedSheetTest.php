@@ -6,6 +6,7 @@ use SheetsTableSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Models\RelatedSheet;
 use Dios\System\Multicasting\Interfaces\ArrayEntity;
+use Dios\System\Multicasting\Interfaces\KeepsAttributeName;
 use Dios\System\Multicasting\Interfaces\KeepsEntityType;
 use Dios\System\Multicasting\Interfaces\MulticastingEntity;
 use Dios\System\Multicasting\Interfaces\RelatedEntity;
@@ -50,6 +51,7 @@ class RelatedSheetTest extends TestCase
 
         $this->assertInstanceOf(RelatedEntity::class, $instance);
         $this->assertInstanceOf(KeepsEntityType::class, $instance);
+        $this->assertInstanceOf(KeepsAttributeName::class, $instance);
         $this->assertInstanceOf(MulticastingEntity::class, $instance);
         $this->assertInstanceOf(ArrayEntity::class, $instance);
     }
@@ -159,7 +161,19 @@ class RelatedSheetTest extends TestCase
         /** @var RelatedEntity|SingleType $instance **/
         $instance = $sheet->instance;
 
-        // $this->assertEquals(RelatedSheet::SINGLE_TYPE, $instance->getEntityType());
+        $this->assertEquals(RelatedSheet::SINGLE_TYPE, $instance->getEntityType());
+        $this->assertEquals(RelatedSheet::SINGLE_TYPE, $sheet->getEntityType());
+    }
+
+    public function testGetAttributeName()
+    {
+        /** @var RelatedSheet $sheet **/
+        $sheet = $this->getSheetByType(RelatedSheet::SINGLE_TYPE);
+
+        /** @var RelatedEntity|SingleType $instance **/
+        $instance = $sheet->instance;
+
+        $this->assertEquals('properties', $instance->getAttributeName());
     }
 
     public function testInstanceOfSingleType()

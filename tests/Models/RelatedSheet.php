@@ -71,7 +71,26 @@ class RelatedSheet extends Model
         self::ROLL_PAPER_TYPE => \Tests\Models\RelatedSheetTypes\RollPaperType::class,
     ];
 
-    // protected $configureInstanceOfEntity = true;
+    /**
+     * The property to read values for entities.
+     *
+     * @var string
+     */
+    protected $propertyForEntity = 'properties';
+
+    /**
+     * The state of configuring instances of entities.
+     *
+     * @var bool
+     */
+    protected $configureInstanceOfEntity = true;
+
+    /**
+     * The state of filling instances of entities.
+     *
+     * @var bool
+     */
+    protected $fillInstance = true;
 
     /**
      * Returns sheets with the given type.
