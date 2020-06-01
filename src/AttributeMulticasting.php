@@ -311,7 +311,7 @@ trait AttributeMulticasting
             $instance->setAttributeName($this->propertyForEntity);
         }
 
-        if (isset($this->fillInstanceOfEntity) && $this->fillInstanceOfEntity) {
+        if ($instance && isset($this->fillInstance) && $this->fillInstance) {
             $instance = $this->fillInstanceOfEntity($instance);
         }
 
