@@ -5,7 +5,6 @@ namespace Dios\System\Multicasting;
 use Dios\System\Multicasting\Interfaces\MulticastingEntity;
 use Dios\System\Multicasting\Interfaces\EntityWithModel;
 use Dios\System\Multicasting\Interfaces\RelatedEntity;
-use Dios\System\Multicasting\Interfaces\SimpleEntity;
 use Dios\System\Multicasting\Interfaces\SimpleArrayEntity;
 use Dios\System\Multicasting\Interfaces\ArrayEntity;
 use Dios\System\Multicasting\Interfaces\SingleValueEntity;
@@ -275,14 +274,10 @@ trait AttributeMulticasting
         $interfaceType = $this->getInterfaceTypeOfEntities();
 
         switch ($interfaceType) {
-            case 'related_entity': // deprecated
             case RelatedEntity::class:
-            case 'entity_with_model': // deprecated
             case EntityWithModel::class:
                 $instance = new $className($this);
                 break;
-            case 'simple': // deprecated
-            case SimpleEntity::class:
             case SimpleArrayEntity::class:
                 $this->throwExceptionWhenUndefinedPropertyForEntities();
                 $instance = new $className($this->{$this->propertyForEntity});
