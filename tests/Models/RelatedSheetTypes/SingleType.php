@@ -7,8 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 use Dios\System\Multicasting\Interfaces\ArrayEntity;
 use Dios\System\Multicasting\Interfaces\RelatedEntity;
 use Dios\System\Multicasting\Interfaces\KeepsEntityType;
+use Dios\System\Multicasting\Interfaces\KeepsAttributeName;
 
-class SingleType implements RelatedEntity, ArrayEntity, KeepsEntityType
+class SingleType implements RelatedEntity, ArrayEntity, KeepsEntityType, KeepsAttributeName
 {
     /**
      * An instance of the model.
@@ -30,6 +31,8 @@ class SingleType implements RelatedEntity, ArrayEntity, KeepsEntityType
     protected $rightMargin;
 
     protected $entityType;
+
+    protected $attributeName;
 
     public function __construct(Model &$model)
     {
@@ -135,6 +138,26 @@ class SingleType implements RelatedEntity, ArrayEntity, KeepsEntityType
     public function getEntityType(): string
     {
         return $this->entityType;
+    }
+
+    /**
+     * Sets an attribute name.
+     * 
+     * @param string $name
+     */
+    public function setAttributeName(string $name)
+    {
+        $this->attributeName = $name;
+    }
+
+    /**
+     * Returns an attribute name.
+     *
+     * @return string
+     */
+    public function getAttributeName(): string
+    {
+        return $this->attributeName;
     }
     
     /**
