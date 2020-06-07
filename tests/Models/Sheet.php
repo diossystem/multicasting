@@ -49,7 +49,7 @@ class Sheet extends Model
 
     /**
      * The source that contains an entity type.
-     * 
+     *
      * @var string
      */
     protected $sourceWithEntityType = 'type';
@@ -63,6 +63,20 @@ class Sheet extends Model
         self::SINGLE_TYPE => \Tests\Models\SheetTypes\SingleType::class,
         self::ROLL_PAPER_TYPE => \Tests\Models\SheetTypes\RollPaperType::class,
     ];
+
+    /**
+     * The state of configuring instances of entities.
+     *
+     * @var bool
+     */
+    // protected $configureInstanceOfEntity = true;
+
+    /**
+     * The state of filling instances of entities.
+     *
+     * @var bool
+     */
+    protected $fillInstance = false;
 
     /**
      * Returns sheets with the given type.

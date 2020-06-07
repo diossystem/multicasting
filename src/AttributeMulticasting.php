@@ -254,7 +254,7 @@ trait AttributeMulticasting
         /** @var MulticastingEntity|null $instance **/
         $instance = $this->newInstanceByClassNameOfEntity($className);
 
-        if ($instance && isset($this->configureInstanceOfEntity) && $this->configureInstanceOfEntity) {
+        if ($instance && $this->isThereNeedToConfigure()) {
             $instance = $this->configureInstance($instance);
         }
 
@@ -307,7 +307,7 @@ trait AttributeMulticasting
             $instance->setAttributeName($this->propertyForEntity);
         }
 
-        if ($instance && isset($this->fillInstance) && $this->fillInstance) {
+        if ($instance && $this->isThereNeedToFill()) {
             $instance = $this->fillInstanceOfEntity($instance);
         }
 
@@ -364,7 +364,7 @@ trait AttributeMulticasting
             if ($throwException) {
                 throw new UndefinedCurrentInstance;
             }
-            
+
             return false;
         }
 
@@ -437,5 +437,29 @@ trait AttributeMulticasting
         if (! isset($this->propertyForEntity)) {
             throw new UndefinedPropertyForEntities;
         }
+    }
+
+    /**
+     * Checks whether the current instance needs to be configured.
+     *
+     * @return bool
+     */
+    public function isThereNeedToConfigure(): bool
+    {
+         return ! isset($this->configureInstanceOfEntity)
+            || isset($this->configureInstanceOfEntity) && $this->configureInstanceOfEntity
+        ;
+    }
+
+    /**
+     * Checks whether the current instance need to be filled.
+     *
+     * @return bool
+     */
+    public function isThereNeedToFill(): bool
+    {
+        return ! isset($this->fillInstance)
+            || isset($this->fillInstance) && $this->fillInstance
+        ;
     }
 }
