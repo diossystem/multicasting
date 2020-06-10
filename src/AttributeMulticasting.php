@@ -224,7 +224,38 @@ trait AttributeMulticasting
     }
 
     /**
-     * Initializes an instance of the current entity and returns it.
+     * Sets a new instance to the model.
+     *
+     * @param  MulticastingEntity $instance
+     * @return void
+     */
+    public function setInstance(MulticastingEntity $instance)
+    {
+        $this->instanceOfEntity = $instance;
+        $this->syncInstanceWithProperty();
+    }
+
+    /**
+     * Initializes a new instance by the entity type and returns it.
+     * If $prepare is true, then prepares the new instance.
+     *
+     * @param  string $type
+     * @param  bool $prepare
+     * @return MulticastingEntity|null
+     */
+    public function initializeInstanceByEntityType(string $type, bool $prepare = false)
+    {
+        $this->instanceOfEntity = $prepare
+            ? $this->makeInstanceByEntityType($type)
+            : $this->newInstanceByEntityType($type)
+        ;
+
+        return $this->instanceOfEntity;
+    }
+
+    /**
+     * Initializes an instance of the current entity.
+     * Prepares and returns it.
      *
      * @return MulticastingEntity|null
      */
@@ -233,6 +264,18 @@ trait AttributeMulticasting
         /** @var string|mixed|null $type **/
         $type = $this->getEntityType();
 
+        return $this->makeInstanceByEntityType($type);
+    }
+
+    /**
+     * Initializes a new instance by the entity type.
+     * Prepares and returns it.
+     *
+     * @param  string $type
+     * @return MulticastingEntity|null
+     */
+    public function makeInstanceByEntityType(string $type)
+    {
         /** @var string|null $className **/
         $className = $this->getClassNameOfEntityHandlerOrDefaultEntityHandler($type);
 
@@ -289,6 +332,21 @@ trait AttributeMulticasting
         }
 
         return $instance;
+    }
+
+    /**
+     * Makes a new instance by the entity type.
+     * Does not prepare the new instance.
+     *
+     * @param  string $type
+     * @return MulticastingEntity|null
+     */
+    public function newInstanceByEntityType(string $type)
+    {
+        /** @var string|null $className **/
+        $className = $this->getClassNameOfEntityHandlerOrDefaultEntityHandler($type);
+
+        return $this->newInstanceByClassNameOfEntity($className);
     }
 
     /**
@@ -379,8 +437,7 @@ trait AttributeMulticasting
             return false;
         }
 
-        $this->instanceOfEntity = $instance;
-        $this->syncInstanceWithProperty();
+        $this->setInstance($instance);
 
         return true;
     }
