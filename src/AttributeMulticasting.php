@@ -37,6 +37,17 @@ trait AttributeMulticasting
     protected $instanceOfEntity;
 
     /**
+     * Returns an array with supported types of entities.
+     *
+     * @return array|string[]
+     */
+    public function getTypesOfEntities(): array
+    {
+        // TODO Исключение, когда переменная не задана.
+        return array_keys($this->entityTypeMapping);
+    }
+
+    /**
      * Returns an entity type.
      *
      * @param  bool   $cache
