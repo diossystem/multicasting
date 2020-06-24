@@ -18,7 +18,7 @@ class CreateSheetsTable extends Migration
     {
         Schema::create('sheets', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('type')->index();
+            $table->string('type')->nullable()->index();
             $table->string('name');
             $table->unsignedTinyInteger('height')->default(0);
             $table->unsignedTinyInteger('width')->default(0);
