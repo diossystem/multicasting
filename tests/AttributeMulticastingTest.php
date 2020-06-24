@@ -2,11 +2,27 @@
 
 namespace Tests;
 
+use AdditionalFieldsTableSeeder;
+use SheetsTableSeeder;
+use Dios\System\Multicasting\AttributeMulticasting;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Models\AdditionalFieldsOfPages;
+use Tests\Models\Sheet;
 use Tests\TestCase;
 
 class AttributeMulticastingTest extends TestCase
 {
+    use RefreshDatabase;
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->loadBaseMigrations();
+        $this->seed(AdditionalFieldsTableSeeder::class);
+        $this->seed(SheetsTableSeeder::class);
+    }
+
     /**
      * @param  string $className
      * @param  array  $types
@@ -32,13 +48,77 @@ class AttributeMulticastingTest extends TestCase
                     'map',
                     'images',
                 ],
+            ],
+            [
+                Sheet::class,
+                [
+                    Sheet::SINGLE_TYPE,
+                    Sheet::ROLL_PAPER_TYPE,
+                ]
+            ],
+        ];
+    }
+
+    /**
+     * @param  string $class
+     * @param  string|int $key
+     * @param  string|null $type
+     * @return void
+     *
+     * @dataProvider getEntityTypeByKeyProvider
+     */
+    public function testGetEntityTypeByKey(string $class, $key, $type)
+    {
+        /** @var Model|AttributeMulticasting $instance */
+        $instance = new $class;
+
+        $this->assertEquals($type, $instance->getEntityTypeByKey($key, false));
+
+    }
+
+    public function getEntityTypeByKeyProvider(): array
+    {
+        return [
+            [
+                AdditionalFieldsOfPages::class,
+                2,
+                'images'
+            ],
+            [
+                AdditionalFieldsOfPages::class,
+                3,
+                'custom'
+            ],
+            [
+                AdditionalFieldsOfPages::class,
+                1,
+                'map'
+            ],
+            [
+                AdditionalFieldsOfPages::class,
+                15,
+                null
+            ],
+            [
+                Sheet::class,
+                Sheet::ROLL_PAPER_TYPE,
+                Sheet::ROLL_PAPER_TYPE
+            ],
+            [
+                Sheet::class,
+                'unknown',
+                'unknown'
+            ],
+            [
+                Sheet::class,
+                'undefined',
+                null
             ]
         ];
     }
 
     // TODO
-    // 1. getTypes
-    // 2. getTypeByKey
+    // 2.1. getEntityKeyByType
     // 3. getKeys and types
     // 4. get
     // 5. Test cache
