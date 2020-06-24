@@ -268,16 +268,19 @@ trait AttributeMulticasting
     }
 
     /**
-     * Initializes a new instance by the entity type.
+     * Initializes a new instance by the given entity type.
      * Prepares and returns it.
      *
-     * @param  string $type
+     * @param  string|null $type
      * @return MulticastingEntity|null
      */
-    public function makeInstanceByEntityType(string $type)
+    public function makeInstanceByEntityType(string $type = null)
     {
         /** @var string|null $className **/
-        $className = $this->getClassNameOfEntityHandlerOrDefaultEntityHandler($type);
+        $className = $type
+            ? $this->getClassNameOfEntityHandlerOrDefaultEntityHandler($type)
+            : null
+        ;
 
         if (! $className) {
             return null;
