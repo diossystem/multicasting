@@ -15,6 +15,7 @@ use Dios\System\Multicasting\Exceptions\UndefinedCurrentInstance;
 use Dios\System\Multicasting\Exceptions\UndefinedSourceOfType;
 use Dios\System\Multicasting\Exceptions\UndefinedPropertyForEntities;
 use Dios\System\Multicasting\Exceptions\DifferentTypesOfEntities;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 /**
  * The trait handlers models that have only one attribute
@@ -90,7 +91,7 @@ trait AttributeMulticasting
      */
     public function getEntityTypeFromSourceWithoutCurrentModel(string $source, $key)
     {
-        /** @var array $segments Segments to a value ***/
+        /** @var array $segments Segments to the type ***/
         $segments = explode('.', $source);
 
         $relatedModel = $this;
@@ -162,7 +163,7 @@ trait AttributeMulticasting
      */
     protected function getEntityTypeFromSource(string $source)
     {
-        /** @var array $segments Segments to a value ***/
+        /** @var array $segments Segments to the type ***/
         $segments = explode('.', $source);
 
         // Uses the current model as the start value
@@ -186,14 +187,79 @@ trait AttributeMulticasting
     }
 
     /**
+     * Returns an entity key by the given type.
+     *
+     * @param  mixed|string|int|null $type
+     * @param  bool $cache
+     * @return mixed|string|int|null
+     */
+    public function getEntityKeyByType($type, bool $cache = true)
+    {
+        $this->throwExceptionWhenUndefinedSourceOfType();
+
+        if ($cache && self::hasCacheOfEntityTypeByKey($type)) {
+            return self::getCacheOfEntityTypeByKey($type);
+        }
+
+        $source = new Source($this->sourceWithEntityType);
+
+        /** @var string|int|null $key */
+        $key = $this->getEntityKeyByTypeFromSource($source->getRealSource(), $type);
+
+        if ($cache && $type) {
+            self::addCacheOfEntityKey($key, $type);
+        }
+
+        return $key;
+    }
+
+    /**
+     * Returns an entity key by the given type from a source.
+     *
+     * @param  string $source
+     * @param  mixed|string $type
+     * @return int|string|null
+     */
+    public function getEntityKeyByTypeFromSource(string $source, $type)
+    {
+        /** @var array $segments Segments to the type ***/
+        $segments = explode('.', $source);
+
+        $relatedModel = $this;
+
+        foreach ($segments as $segment) {
+            if (method_exists($relatedModel, $segment)) {
+                $relation = $relatedModel->$segment();
+
+                if (! ($relation instanceof Relation)) {
+                    return null;
+                }
+
+                $relatedModel = $relation->getRelated();
+            } else {
+                /** @var Model|null $modelWithValue */
+                $modelWithValue = $relatedModel->where($segment, $type)->first();
+
+                if ($modelWithValue && count($segments) === 1) {
+                    return $modelWithValue->$segment;
+                }
+
+                return $modelWithValue ? $modelWithValue->getKey() : null;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Adds a new value of cache of entity keys.
      *
-     * @param string|mixed $key
-     * @param string|mixed|null $value
+     * @param string|mixed $key         A key or an index of the type.
+     * @param string|mixed|null $type
      */
-    protected static function addCacheOfEntityKey($key, $value)
+    protected static function addCacheOfEntityKey($key, $type)
     {
-        self::$entityKeyCache[$key] = $value;
+        self::$entityKeyCache[$key] = $type;
     }
 
     /**
@@ -216,6 +282,34 @@ trait AttributeMulticasting
     public static function hasCacheEntityKey($key): bool
     {
         return key_exists($key, self::$entityKeyCache);
+    }
+
+    /**
+     * Returns an entity key by the given type.
+     *
+     * @param  string|mixed $type
+     * @return string|mixed|null
+     */
+    public static function getCacheOfEntityTypeByKey($type)
+    {
+        /** @var string|int|bool $key */
+        $key = array_search($type, self::$entityKeyCache, true);
+
+        return $key === false ? null : $key;
+    }
+
+    /**
+     * Checks whether a cache of an entity type exists.
+     *
+     * @param  string|mixed $type
+     * @return bool
+     */
+    public static function hasCacheOfEntityTypeByKey($type): bool
+    {
+        /** @var string|int|bool $key */
+        $key = array_search($type, self::$entityKeyCache, true);
+
+        return $key === false ? null : $key;
     }
 
     /**
@@ -522,6 +616,52 @@ trait AttributeMulticasting
         return true;
     }
 
+    public function setInstanceWithNewType(string $type, MulticastingEntity $instance)
+    {
+        $this->changeEntityType($type);
+        // TODO меняет тип сущности на основе текущих соответствий
+        // Задает новую текущую сущность
+        // Заполняет значения из текущей сущности
+    }
+
+    /**
+     * Changes the current type with the new type
+     * and resets the current instance and its data.
+     */
+    public function changeEntityType(string $type)
+    {
+        $this->type = $type; // fix
+
+        if (true) {
+            // TODO На основе заданного типа найти ключ/индекс
+            // и установить его текущей сущности
+        } else {
+            $this->instanceOfEntity = null;
+        }
+
+        $this->resetDataOfProperty();
+
+        return $state ?? false;
+    }
+
+    public function replaceTypeAndInstance(string $type, MulticastingEntity $instance)
+    {
+        $this->changeEntityType($type);
+        $this->setInstance($instance);
+    }
+
+    public function replaceTypeAndFillInstance(string $type, $data)
+    {
+        if (! $this->changeEntityType($type)) {
+            return false; // or exception unsupported type
+        }
+
+        $instance = $this->newInstanceByEntityType($type);
+        $this->setInstance($instance);
+
+        return $instance;
+    }
+
     /**
      * Synchronizes values of the instance with values of the property.
      * Returns a new value.
@@ -546,6 +686,17 @@ trait AttributeMulticasting
         }
 
         return $this->{$this->propertyForEntity};
+    }
+
+    /**
+     * Resets data of the property.
+     *
+     * @return void
+     */
+    public function resetDataOfProperty()
+    {
+        $this->throwExceptionWhenUndefinedPropertyForEntities();
+        $this->{$this->propertyForEntity} = null;
     }
 
     /**
