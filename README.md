@@ -10,9 +10,109 @@ This provides great possibilities for models and simplifies implementation and r
 Use it in your models of Eloquent.
 
 **How to do this**:
-- add the traits to your some model;
-- set values to variables;
-- implement your handlers using base interfaces or your own interfaces.
+- add the traits to your model;
+- configure variables (set values to variables);
+- implement your handlers using the base interfaces or your own interfaces.
+
+**Example #1.1. Configuring the model**
+
+```php
+namespace App\Models;
+
+use Dios\System\Multicasting\AttributeMulticasting;
+use Dios\System\Multicasting\ReadwriteInstance; // to have the access from attributes: $model->instance
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+class Sheet extends Model
+{
+    use AttributeMulticasting, ReadwriteInstance;
+
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'properties' => 'array',
+    ];
+
+    /**
+     * The instance type of entities.
+     *
+     * @var string
+     */
+    protected $interfaceType = \Dios\System\Multicasting\Interfaces\RelatedEntity::class;
+
+    /**
+     * The source that contains an entity type.
+     *
+     * @var string
+     */
+    protected $sourceWithEntityType = 'type';
+
+    /**
+     * Type mapping of entity types and their handlers.
+     *
+     * @var array
+     */
+    protected $entityTypeMapping = [
+        'single_type' => App\Models\RelatedSheetTypes\SingleType::class,
+        'roll_paper_type' => App\Models\RelatedSheetTypes\RollPaperType::class,
+    ];
+
+    /**
+     * The property to read values for entities.
+     *
+     * @var string
+     */
+    protected $propertyForEntity = 'properties'; // the table has a column namesd 'properties'
+
+    /**
+     * The state of configuring instances of entities.
+     *
+     * @var bool
+     */
+    // protected $configureInstanceOfEntity = true; // by default
+
+    /**
+     * The state of filling instances of entities.
+     *
+     * @var bool
+     */
+    // protected $fillInstance = true; // by default
+```
+
+**Example #1.2. Using instances**
+
+```php
+$model = Sheet::where('type', 'single_type')->find($id);
+
+/** @var SingleType $singleType */
+$singleType = $model->instance;
+$height = $singleType->getHeight();
+$topMargin = $singleType->getTopMargin();
+$availableHeight = $singleType->getAvailableHeight();
+
+if ($singleType->canContain($customHeight, $customWeight)) {
+    // actions
+}
+
+$singleType->setHeight($newHeight);
+$singleType->save();
+
+// The second type
+$model = Sheet::where('type', 'roll_paper_type')->find($id);
+
+/** @var RollPaperType $rollPaperType */
+$rollPaperType = $model->instance;
+$indent = $rollPaperType->getIndent(); // this method does not exist in SingleType
+// others methods
+
+if ($rollPaperType->canContain($customHeight, $customWeight)) {
+    // other actions
+}
+```
 
 ## Installation
 

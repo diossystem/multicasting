@@ -5,7 +5,6 @@ namespace Dios\System\Multicasting;
 use Dios\System\Multicasting\Interfaces\MulticastingEntity;
 use Dios\System\Multicasting\Interfaces\EntityWithModel;
 use Dios\System\Multicasting\Interfaces\RelatedEntity;
-use Dios\System\Multicasting\Interfaces\SimpleEntity;
 use Dios\System\Multicasting\Interfaces\SimpleArrayEntity;
 use Dios\System\Multicasting\Interfaces\ArrayEntity;
 use Dios\System\Multicasting\Interfaces\SingleValueEntity;
@@ -225,7 +224,38 @@ trait AttributeMulticasting
     }
 
     /**
-     * Initializes an instance of the current entity and returns it.
+     * Sets a new instance to the model.
+     *
+     * @param  MulticastingEntity $instance
+     * @return void
+     */
+    public function setInstance(MulticastingEntity $instance)
+    {
+        $this->instanceOfEntity = $instance;
+        $this->syncInstanceWithProperty();
+    }
+
+    /**
+     * Initializes a new instance by the entity type and returns it.
+     * If $prepare is true, then prepares the new instance.
+     *
+     * @param  string $type
+     * @param  bool $prepare
+     * @return MulticastingEntity|null
+     */
+    public function initializeInstanceByEntityType(string $type, bool $prepare = false)
+    {
+        $this->instanceOfEntity = $prepare
+            ? $this->makeInstanceByEntityType($type)
+            : $this->newInstanceByEntityType($type)
+        ;
+
+        return $this->instanceOfEntity;
+    }
+
+    /**
+     * Initializes an instance of the current entity.
+     * Prepares and returns it.
      *
      * @return MulticastingEntity|null
      */
@@ -234,8 +264,23 @@ trait AttributeMulticasting
         /** @var string|mixed|null $type **/
         $type = $this->getEntityType();
 
+        return $this->makeInstanceByEntityType($type);
+    }
+
+    /**
+     * Initializes a new instance by the given entity type.
+     * Prepares and returns it.
+     *
+     * @param  string|null $type
+     * @return MulticastingEntity|null
+     */
+    public function makeInstanceByEntityType(string $type = null)
+    {
         /** @var string|null $className **/
-        $className = $this->getClassNameOfEntityHandlerOrDefaultEntityHandler($type);
+        $className = $type
+            ? $this->getClassNameOfEntityHandlerOrDefaultEntityHandler($type)
+            : null
+        ;
 
         if (! $className) {
             return null;
@@ -255,7 +300,7 @@ trait AttributeMulticasting
         /** @var MulticastingEntity|null $instance **/
         $instance = $this->newInstanceByClassNameOfEntity($className);
 
-        if ($instance && isset($this->configureInstanceOfEntity) && $this->configureInstanceOfEntity) {
+        if ($instance && $this->isThereNeedToConfigure()) {
             $instance = $this->configureInstance($instance);
         }
 
@@ -275,14 +320,10 @@ trait AttributeMulticasting
         $interfaceType = $this->getInterfaceTypeOfEntities();
 
         switch ($interfaceType) {
-            case 'related_entity': // deprecated
             case RelatedEntity::class:
-            case 'entity_with_model': // deprecated
             case EntityWithModel::class:
                 $instance = new $className($this);
                 break;
-            case 'simple': // deprecated
-            case SimpleEntity::class:
             case SimpleArrayEntity::class:
                 $this->throwExceptionWhenUndefinedPropertyForEntities();
                 $instance = new $className($this->{$this->propertyForEntity});
@@ -294,6 +335,21 @@ trait AttributeMulticasting
         }
 
         return $instance;
+    }
+
+    /**
+     * Makes a new instance by the entity type.
+     * Does not prepare the new instance.
+     *
+     * @param  string $type
+     * @return MulticastingEntity|null
+     */
+    public function newInstanceByEntityType(string $type)
+    {
+        /** @var string|null $className **/
+        $className = $this->getClassNameOfEntityHandlerOrDefaultEntityHandler($type);
+
+        return $this->newInstanceByClassNameOfEntity($className);
     }
 
     /**
@@ -312,7 +368,7 @@ trait AttributeMulticasting
             $instance->setAttributeName($this->propertyForEntity);
         }
 
-        if ($instance && isset($this->fillInstance) && $this->fillInstance) {
+        if ($instance && $this->isThereNeedToFill()) {
             $instance = $this->fillInstanceOfEntity($instance);
         }
 
@@ -369,7 +425,7 @@ trait AttributeMulticasting
             if ($throwException) {
                 throw new UndefinedCurrentInstance;
             }
-            
+
             return false;
         }
 
@@ -384,8 +440,7 @@ trait AttributeMulticasting
             return false;
         }
 
-        $this->instanceOfEntity = $instance;
-        $this->syncInstanceWithProperty();
+        $this->setInstance($instance);
 
         return true;
     }
@@ -442,5 +497,29 @@ trait AttributeMulticasting
         if (! isset($this->propertyForEntity)) {
             throw new UndefinedPropertyForEntities;
         }
+    }
+
+    /**
+     * Checks whether the current instance needs to be configured.
+     *
+     * @return bool
+     */
+    public function isThereNeedToConfigure(): bool
+    {
+         return ! isset($this->configureInstanceOfEntity)
+            || isset($this->configureInstanceOfEntity) && $this->configureInstanceOfEntity
+        ;
+    }
+
+    /**
+     * Checks whether the current instance need to be filled.
+     *
+     * @return bool
+     */
+    public function isThereNeedToFill(): bool
+    {
+        return ! isset($this->fillInstance)
+            || isset($this->fillInstance) && $this->fillInstance
+        ;
     }
 }

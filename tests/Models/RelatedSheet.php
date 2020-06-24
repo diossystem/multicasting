@@ -56,7 +56,7 @@ class RelatedSheet extends Model
 
     /**
      * The source that contains an entity type.
-     * 
+     *
      * @var string
      */
     protected $sourceWithEntityType = 'type';
@@ -83,14 +83,14 @@ class RelatedSheet extends Model
      *
      * @var bool
      */
-    protected $configureInstanceOfEntity = true;
+    // protected $configureInstanceOfEntity = true;
 
     /**
      * The state of filling instances of entities.
      *
      * @var bool
      */
-    protected $fillInstance = true;
+    // protected $fillInstance = true;
 
     /**
      * Returns sheets with the given type.
