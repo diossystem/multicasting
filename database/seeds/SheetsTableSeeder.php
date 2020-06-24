@@ -49,5 +49,13 @@ class SheetsTableSeeder extends Seeder
                 'bore' => 10,
             ],
         ]);
+
+        factory(Sheet::class)->create([
+            'type' => null,
+            'name' => 'Undefined sheet',
+            'height' => 0,
+            'width' => 0,
+            'properties' => null,
+        ]);
     }
 }
