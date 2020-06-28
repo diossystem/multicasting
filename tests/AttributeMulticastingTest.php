@@ -175,6 +175,60 @@ class AttributeMulticastingTest extends TestCase
         ];
     }
 
+    /**
+     * @param  string $className
+     * @param  array $keys
+     * @param  bool $supportedKeys
+     * @return void
+     *
+     * @dataProvider getEnityKeysWithTypesProvider
+     */
+    public function testGetEntityKeysWithTypes(string $className, array $keys, bool $supportedKeys)
+    {
+        $instance = new $className;
+        $this->assertEquals($keys, $instance->getEntityKeysWithTypes($supportedKeys));
+    }
+
+    public function getEnityKeysWithTypesProvider(): array
+    {
+        return [
+            [
+                AdditionalFieldsOfPages::class,
+                [
+                    'custom' => 3,
+                    'images' => 2,
+                    'local_pages' => 6,
+                    'map' => 1,
+                ],
+                false
+            ],
+            [
+                AdditionalFieldsOfPages::class,
+                [
+                    'images' => 2,
+                    'map' => 1,
+                ],
+                true
+            ],
+            [
+                Sheet::class,
+                [
+                    Sheet::ROLL_PAPER_TYPE => Sheet::ROLL_PAPER_TYPE,
+                    Sheet::SINGLE_TYPE => Sheet::SINGLE_TYPE,
+                    'unknown' => 'unknown',
+                ],
+                false,
+            ],
+            [
+                Sheet::class,
+                [
+                    Sheet::ROLL_PAPER_TYPE => Sheet::ROLL_PAPER_TYPE,
+                    Sheet::SINGLE_TYPE => Sheet::SINGLE_TYPE,
+                ],
+                true,
+            ],
+        ];
+    }
 
     /**
      * @param  string $className
