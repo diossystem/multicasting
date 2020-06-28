@@ -52,7 +52,7 @@ trait AttributeMulticasting
      */
     public function getTypesOfEntities(): array
     {
-        $this->thorwExceptionWhenUndefinedEntityTypeMapping();
+        $this->throwExceptionWhenUndefinedEntityTypeMapping();
 
         return array_keys($this->entityTypeMapping);
     }
@@ -646,7 +646,7 @@ trait AttributeMulticasting
      *
      * @throws UndefinedEntityTypeMapping
      */
-    public function thorwExceptionWhenUndefinedEntityTypeMapping()
+    public function throwExceptionWhenUndefinedEntityTypeMapping()
     {
         if (! isset($this->entityTypeMapping)) {
             throw new UndefinedEntityTypeMapping();
