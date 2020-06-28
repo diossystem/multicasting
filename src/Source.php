@@ -175,6 +175,36 @@ class Source
     }
 
     /**
+     * Returns an entity key by a type.
+     *
+     * @param  string|int|null $type
+     * @return string|int|null
+     */
+    public function getEntityKeyByType($type)
+    {
+        /** @var Model|null */
+        $object = $this->getObjectOfSource();
+        /** @var string|bool $property */
+        $property = end($this->segmentsOfRealSource);
+
+        if ($type === null || $object === null || $property === false) {
+            return null;
+        }
+
+        /** @var Model|null $objectWithValue */
+        $objectWithValue = $object->where($property, $type)->first();
+
+        if (! $objectWithValue) {
+            return null;
+        }
+
+        return count($this->segmentsOfRealSource) === 1
+            ? $objectWithValue->$property
+            : $objectWithValue->getKey()
+        ;
+    }
+
+    /**
      * Returns entity types with keys.
      * Keys of the array are keys (indexes) of the types.
      *

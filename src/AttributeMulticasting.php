@@ -119,51 +119,13 @@ trait AttributeMulticasting
         $source = new Source($this->sourceWithEntityType, $this);
 
         /** @var string|int|null $key */
-        $key = $this->getEntityKeyByTypeFromSource($source->getRealSource(), $type);
+        $key = $source->getEntityKeyByType($type);
 
         if ($cache && $type) {
             self::addCacheOfEntityKey($key, $type);
         }
 
         return $key;
-    }
-
-    /**
-     * Returns an entity key by the given type from a source.
-     *
-     * @param  string $source
-     * @param  mixed|string $type
-     * @return int|string|null
-     */
-    public function getEntityKeyByTypeFromSource(string $source, $type)
-    {
-        /** @var array $segments Segments to the type ***/
-        $segments = explode('.', $source);
-
-        $relatedModel = $this;
-
-        foreach ($segments as $segment) {
-            if (method_exists($relatedModel, $segment)) {
-                $relation = $relatedModel->$segment();
-
-                if (! ($relation instanceof Relation)) {
-                    return null;
-                }
-
-                $relatedModel = $relation->getRelated();
-            } else {
-                /** @var Model|null $modelWithValue */
-                $modelWithValue = $relatedModel->where($segment, $type)->first();
-
-                if ($modelWithValue && count($segments) === 1) {
-                    return $modelWithValue->$segment;
-                }
-
-                return $modelWithValue ? $modelWithValue->getKey() : null;
-            }
-        }
-
-        return null;
     }
 
     /**
