@@ -443,6 +443,60 @@ class AttributeMulticastingTest extends TestCase
         ];
     }
 
+    /**
+     * @param  string $className
+     * @param  string|int|null $type
+     * @param  string $expected
+     * @return void
+     *
+     * @dataProvider getClassNameOfEntityHandlerOrDefaultEntityHandlerProvider
+     */
+    public function testGetClassNameOfEntityHandlerOrDefaultEntityHandler(
+        string $className,
+        $type = null,
+        string $expected = null
+    ) {
+        /** @var AttributeMulticasting $instance */
+        $instance = new $className;
+        $this->assertEquals($expected, $instance->getClassNameOfEntityHandlerOrDefaultEntityHandler($type));
+    }
+
+    public function getClassNameOfEntityHandlerOrDefaultEntityHandlerProvider(): array
+    {
+        return [
+            [
+                AdditionalFieldsOfPages::class,
+                'map',
+                \Tests\Models\AdditionalFieldHandlers\Map::class,
+            ],
+            [
+                AdditionalFieldsOfPages::class,
+                'images',
+                \Tests\Models\AdditionalFieldHandlers\Images::class,
+            ],
+            [
+                AdditionalFieldsOfPages::class,
+                null,
+                \Tests\Models\AdditionalFieldHandlers\DefaultHandler::class,
+            ],
+            [
+                AdditionalFieldsOfPages::class,
+                'custom',
+                \Tests\Models\AdditionalFieldHandlers\DefaultHandler::class,
+            ],
+            [
+                AdditionalFieldsOfPages::class,
+                'undefined',
+                \Tests\Models\AdditionalFieldHandlers\DefaultHandler::class,
+            ],
+            [
+                Sheet::class,
+                Sheet::ROLL_PAPER_TYPE,
+                \Tests\Models\SheetTypes\RollPaperType::class,
+            ],
+        ];
+    }
+
     // TODO
     // 4. get
     // 5. Test cache

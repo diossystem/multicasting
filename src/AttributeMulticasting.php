@@ -316,7 +316,7 @@ trait AttributeMulticasting
      * Returns a class name of an entity handler by the type
      * or returns a class name of the default entity handler.
      *
-     * @param  string $type
+     * @param  string|int|null $type
      * @return string|null
      */
     public function getClassNameOfEntityHandlerOrDefaultEntityHandler($type)
