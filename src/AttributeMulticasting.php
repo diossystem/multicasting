@@ -301,7 +301,7 @@ trait AttributeMulticasting
     /**
      * Returns a class name of an entity handler by its type.
      *
-     * @param  string $type
+     * @param  string|int|null $type
      * @return string|null
      */
     public function getClassNameOfEntityHandlerByType($type)

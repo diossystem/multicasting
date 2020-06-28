@@ -392,6 +392,57 @@ class AttributeMulticastingTest extends TestCase
         ];
     }
 
+    /**
+     * @param  string $className
+     * @param  string|int|null $type
+     * @param  string $expected
+     * @return void
+     *
+     * @dataProvider getClassNameOfEntityHandlerByTypeProvider
+     */
+    public function testGetClassNameOfEntityHandlerByType(string $className, $type = null, string $expected = null)
+    {
+        /** @var AttributeMulticasting $instance */
+        $instance = new $className;
+        $this->assertEquals($expected, $instance->getClassNameOfEntityHandlerByType($type));
+    }
+
+    public function getClassNameOfEntityHandlerByTypeProvider(): array
+    {
+        return [
+            [
+                AdditionalFieldsOfPages::class,
+                'map',
+                \Tests\Models\AdditionalFieldHandlers\Map::class,
+            ],
+            [
+                AdditionalFieldsOfPages::class,
+                'images',
+                \Tests\Models\AdditionalFieldHandlers\Images::class,
+            ],
+            [
+                AdditionalFieldsOfPages::class,
+                null,
+                null,
+            ],
+            [
+                AdditionalFieldsOfPages::class,
+                'custom',
+                null,
+            ],
+            [
+                AdditionalFieldsOfPages::class,
+                'undefined',
+                null,
+            ],
+            [
+                Sheet::class,
+                Sheet::ROLL_PAPER_TYPE,
+                \Tests\Models\SheetTypes\RollPaperType::class,
+            ],
+        ];
+    }
+
     // TODO
     // 4. get
     // 5. Test cache
