@@ -341,7 +341,7 @@ class AttributeMulticastingTest extends TestCase
      * @param  bool $expected
      * @return void
      *
-     * @dataProvider hasDefaultEntityHandlerProvder
+     * @dataProvider hasDefaultEntityHandlerProvider
      */
     public function testHasDefaultEntityHandler(string $className, bool $expected)
     {
@@ -350,7 +350,7 @@ class AttributeMulticastingTest extends TestCase
         $this->assertEquals($expected, $instance->hasDefaultEntityHandler());
     }
 
-    public function hasDefaultEntityHandlerProvder(): array
+    public function hasDefaultEntityHandlerProvider(): array
     {
         return [
             [
@@ -360,6 +360,34 @@ class AttributeMulticastingTest extends TestCase
             [
                 Sheet::class,
                 false
+            ],
+        ];
+    }
+
+    /**
+     * @param  string $className
+     * @param  string|null $expected
+     * @return void
+     *
+     * @dataProvider getClassNameOfDefaultEntityHandlerProvider
+     */
+    public function testGetClassNameOfDefaultEntityHandler(string $className, string $expected = null)
+    {
+        /** @var AttributeMulticasting $instance */
+        $instance = new $className;
+        $this->assertEquals($expected, $instance->getClassNameOfDefaultEntityHandler());
+    }
+
+    public function getClassNameOfDefaultEntityHandlerProvider(): array
+    {
+        return [
+            [
+                AdditionalFieldsOfPages::class,
+                \Tests\Models\AdditionalFieldHandlers\DefaultHandler::class
+            ],
+            [
+                Sheet::class,
+                null
             ],
         ];
     }
