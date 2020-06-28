@@ -285,6 +285,57 @@ class AttributeMulticastingTest extends TestCase
         ];
     }
 
+    /**
+     * @param string $className
+     * @param string $type
+     * @param bool $existing
+     * @return void
+     *
+     * @dataProvider hasEntityTypeProvider
+     */
+    public function testHasEntityType(string $className, string $type, bool $existing)
+    {
+        /** @var AttributeMulticasting $instance */
+        $instance = new $className;
+        $this->assertEquals($existing, $instance->hasEntityType($type));
+    }
+
+    public function hasEntityTypeProvider(): array
+    {
+        return [
+            [
+                AdditionalFieldsOfPages::class,
+                'images',
+                true
+            ],
+            [
+                AdditionalFieldsOfPages::class,
+                'Images',
+                false
+            ],
+            [
+                AdditionalFieldsOfPages::class,
+                'custom',
+                false
+            ],
+            [
+                Sheet::class,
+                Sheet::SINGLE_TYPE,
+                true
+            ],
+            [
+                Sheet::class,
+                Sheet::ROLL_PAPER_TYPE,
+                true
+            ],
+            [
+                Sheet::class,
+                'unknown',
+                false
+            ],
+        ];
+    }
+
     // TODO
     // 4. get
     // 5. Test cache
