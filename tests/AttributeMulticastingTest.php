@@ -575,12 +575,32 @@ class AttributeMulticastingTest extends TestCase
         ];
     }
 
+    // setInstance
+    // initializeInstanceByEntityType
+    // makeInstanceOfEntity
+    // makeInstanceByEntityType
+    // prepareNewInstanceOfEntity
+    // newInstanceByClassNameOfEntity
+    // newInstanceByEntityType
+    // configureInstance
+    // fillInstanceOfEntity
+    // getInterfaceTypeOfEntities
+    // updateInstance
+    // setInstanceWithNewType
+    // changeEntityType
+    // replaceTypeAndInstance
+    // replaceTypeAndFillInstance
+    // syncInstanceWithProperty
+    // resetDataOfProperty
+    // isThereNeedToConfigure
+    // isThereNeedToFill
+    // exceptions:
+    // throwExceptionWhenUndefinedEntityTypeMapping
+    // throwExceptionWhenUndefinedSourceOfType
+    // throwExceptionWhenUndefinedPropertyForEntities
+
     // TODO
-    // 4. get
     // 5. Test cache
-    // 5. default entity handler
-    // 6. Test each function.
-    // 7. Test exceptions
     // 8. Test working of models and instances
     // Use empty model, full model, model with default properties
 }
