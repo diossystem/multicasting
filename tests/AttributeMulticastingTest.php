@@ -535,6 +535,46 @@ class AttributeMulticastingTest extends TestCase
         ];
     }
 
+    /**
+     * @param  int $key
+     * @param  string|null $entityClassName
+     * @return void
+     *
+     * @dataProvider getInstanceOfAdditionalFieldsProvider
+     */
+    public function testGetInstanceOfAdditionalFields(
+        int $key,
+        string $entityClassName = null
+    ) {
+        /** @var AdditionalFieldsOfPages|AttributeMulticasting $model */
+        $model = AdditionalFieldsOfPages::where('additional_field_id', $key)->first();
+
+        if ($entityClassName) {
+            $handler = new $entityClassName($model->values);
+            $this->assertEquals($handler, $model->getInstance());
+        } else {
+            $this->assertNull($model->getInstance());
+        }
+    }
+
+    public function getInstanceOfAdditionalFieldsProvider(): array
+    {
+        return [
+            'map' => [
+                1,
+                \Tests\Models\AdditionalFieldHandlers\Map::class,
+            ],
+            'images' => [
+                2,
+                \Tests\Models\AdditionalFieldHandlers\Images::class,
+            ],
+            'custom' => [
+                3,
+                \Tests\Models\AdditionalFieldHandlers\DefaultHandler::class,
+            ],
+        ];
+    }
+
     // TODO
     // 4. get
     // 5. Test cache
