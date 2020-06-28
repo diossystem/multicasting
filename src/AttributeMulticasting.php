@@ -15,6 +15,7 @@ use Dios\System\Multicasting\Exceptions\UndefinedCurrentInstance;
 use Dios\System\Multicasting\Exceptions\UndefinedSourceOfType;
 use Dios\System\Multicasting\Exceptions\UndefinedPropertyForEntities;
 use Dios\System\Multicasting\Exceptions\DifferentTypesOfEntities;
+use Dios\System\Multicasting\Exceptions\UndefinedEntityTypeMapping;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
 /**
@@ -51,7 +52,8 @@ trait AttributeMulticasting
      */
     public function getTypesOfEntities(): array
     {
-        // TODO Исключение, когда переменная не задана.
+        $this->thorwExceptionWhenUndefinedEntityTypeMapping();
+
         return array_keys($this->entityTypeMapping);
     }
 
@@ -697,6 +699,18 @@ trait AttributeMulticasting
     {
         $this->throwExceptionWhenUndefinedPropertyForEntities();
         $this->{$this->propertyForEntity} = null;
+    }
+
+    /**
+     * Throws the exception when the map was not assigned.
+     *
+     * @throws UndefinedEntityTypeMapping
+     */
+    public function thorwExceptionWhenUndefinedEntityTypeMapping()
+    {
+        if (! isset($this->entityTypeMapping)) {
+            throw new UndefinedEntityTypeMapping();
+        }
     }
 
     /**
