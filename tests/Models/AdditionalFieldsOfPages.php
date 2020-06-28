@@ -23,6 +23,13 @@ class AdditionalFieldsOfPages extends Pivot
     public $timestamps = false;
 
     /**
+     * The table name.
+     *
+     * @var string
+     */
+    protected $table = 'additional_field_page';
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array
