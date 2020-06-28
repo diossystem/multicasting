@@ -254,6 +254,47 @@ trait AttributeMulticasting
     }
 
     /**
+     * Returns entity types.
+     *
+     * @param  bool $onlySupportedTypes
+     * @return array|string[]|int[]
+     */
+    public function getEntityTypes(bool $onlySupportedTypes = true): array
+    {
+        if ($onlySupportedTypes) {
+            return $this->getTypesOfEntities();
+        }
+
+        return array_values($this->getEntityTypesWithKeys($onlySupportedTypes));
+    }
+
+    /**
+     * Returns entity types with keys.
+     * Keys (indexes) are keys of the array.
+     *
+     * @param  bool $onlySupportedTypes
+     * @return array
+     */
+    public function getEntityTypesWithKeys(bool $onlySupportedTypes = true): array
+    {
+        $source = new Source($this->sourceWithEntityType, $this);
+
+        /** @var array|string[] $types */
+        $types = $source->getEntityTypes();
+
+        if ($onlySupportedTypes) {
+            /** @var array|string[] $supportedTypes */
+            $supportedTypes = $this->getTypesOfEntities();
+
+            $types = array_filter($types, function ($type) use ($supportedTypes) {
+                return in_array($type, $supportedTypes);
+            });
+        }
+
+        return $types;
+    }
+
+    /**
      * Adds a new value of cache of entity keys.
      *
      * @param string|mixed $key         A key or an index of the type.
