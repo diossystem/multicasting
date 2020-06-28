@@ -71,54 +71,16 @@ trait AttributeMulticasting
             return self::getCacheOfEntityKey($key);
         }
 
-        $source = new Source($this->sourceWithEntityType);
+        $source = new Source($this->sourceWithEntityType, $this);
 
         /** @var string|mixed|null $type **/
-        $type = $this->getEntityTypeFromSourceWithoutCurrentModel($source->getRealSource(), $key);
+        $type = $source->getEntityTypeByKey($key);
 
         if ($cache && $type) {
             self::addCacheOfEntityKey($this->{$source->getSourceOfKey()}, $type);
         }
 
         return $type;
-    }
-
-    /**
-     * Returns an entity type from the given source without current model.
-     *
-     * @param  string     $source A source with models and a property.
-     *                            Example for the User model: 'roles.type'.
-     * @param  string|int $key    A key (an index) for a last related model.
-     * @return string|null
-     */
-    public function getEntityTypeFromSourceWithoutCurrentModel(string $source, $key)
-    {
-        /** @var array $segments Segments to the type ***/
-        $segments = explode('.', $source);
-
-        $relatedModel = $this;
-
-        foreach ($segments as $segment) {
-            if (method_exists($relatedModel, $segment)) {
-                $relation = $relatedModel->$segment();
-
-                if (! ($relation instanceof Relation)) {
-                    return null;
-                }
-
-                $relatedModel = $relation->getRelated();
-            } else {
-                /** @var Model|null $modelWithValue */
-                $modelWithValue = count($segments) === 1
-                    ? $relatedModel->where($segment, $key)->first()
-                    : $relatedModel::find($key)
-                ;
-
-                return $modelWithValue ? $modelWithValue->$segment : null;
-            }
-        }
-
-        return null;
     }
 
     /**
@@ -131,61 +93,12 @@ trait AttributeMulticasting
     {
         $this->throwExceptionWhenUndefinedSourceOfType();
 
-        $source = new Source($this->sourceWithEntityType);
+        $source = new Source($this->sourceWithEntityType, $this);
 
-        if ($source->getType() === Source::ANOTHER_MODEL_TYPE) {
-            /** @var string $sourceOfKey */
-            $sourceOfKey = $source->getSourceOfKey();
+        /** @var string $sourceOfKey */
+        $sourceOfKey = $source->getSourceOfKey();
 
-            // Gets a key from the static cache
-            if ($cache && self::hasCacheEntityKey($this->{$sourceOfKey})) {
-                return self::getCacheOfEntityKey($this->{$sourceOfKey});
-            }
-
-            /** @var string|mixed|null $key **/
-            $key = $this->getEntityTypeFromSource($source->getRealSource());
-
-            if ($cache) {
-                self::addCacheOfEntityKey($this->{$sourceOfKey}, $key);
-            }
-
-            return $key;
-        }
-
-        return $this->getEntityTypeFromSource($source->getSourceOfKey());
-    }
-
-    /**
-     * Returns an entity type from the given real source.
-     *
-     * @deprecated v1.3
-     *
-     * @param  string $source
-     * @return mixed|null
-     */
-    protected function getEntityTypeFromSource(string $source)
-    {
-        /** @var array $segments Segments to the type ***/
-        $segments = explode('.', $source);
-
-        // Uses the current model as the start value
-        /** @var Model|string|null **/
-        $value = $this;
-
-        // Finds a key using all segments. They may be in related models.
-        foreach ($segments as $segment) {
-            if (isset($value->$segment)) {
-                $value = $value->$segment;
-            } else {
-                $value = null;
-                break;
-            }
-        }
-
-        return is_scalar($value)
-            ? $value
-            : null
-        ;
+        return $this->getEntityTypeByKey($this->{$sourceOfKey}, $cache);
     }
 
     /**
@@ -203,7 +116,7 @@ trait AttributeMulticasting
             return self::getCacheOfEntityTypeByKey($type);
         }
 
-        $source = new Source($this->sourceWithEntityType);
+        $source = new Source($this->sourceWithEntityType, $this);
 
         /** @var string|int|null $key */
         $key = $this->getEntityKeyByTypeFromSource($source->getRealSource(), $type);
