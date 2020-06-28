@@ -497,6 +497,44 @@ class AttributeMulticastingTest extends TestCase
         ];
     }
 
+    /**
+     * @param  string $key
+     * @param  string|null $entityClassName
+     * @return void
+     *
+     * @dataProvider getInstanceOfSheetProvider
+     */
+    public function testGetInstanceOfSheet(string $key, string $entityClassName = null)
+    {
+        /** @var Sheet|AttributeMulticasting $model */
+        $model = Sheet::where('type', $key)->first();
+
+        if ($entityClassName) {
+            $handler = new $entityClassName($model);
+            $this->assertEquals($handler, $model->getInstance());
+        } else {
+            $this->assertNull($model->getInstance());
+        }
+    }
+
+    public function getInstanceOfSheetProvider(): array
+    {
+        return [
+            [
+                Sheet::ROLL_PAPER_TYPE,
+                \Tests\Models\SheetTypes\RollPaperType::class,
+            ],
+            [
+                Sheet::SINGLE_TYPE,
+                \Tests\Models\SheetTypes\SingleType::class,
+            ],
+            [
+                'unknown',
+                null,
+            ],
+        ];
+    }
+
     // TODO
     // 4. get
     // 5. Test cache
