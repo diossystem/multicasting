@@ -16,7 +16,6 @@ use Dios\System\Multicasting\Exceptions\UndefinedSourceOfType;
 use Dios\System\Multicasting\Exceptions\UndefinedPropertyForEntities;
 use Dios\System\Multicasting\Exceptions\DifferentTypesOfEntities;
 use Dios\System\Multicasting\Exceptions\UndefinedEntityTypeMapping;
-use Illuminate\Database\Eloquent\Relations\Relation;
 
 /**
  * The trait handlers models that have only one attribute
@@ -44,6 +43,18 @@ trait AttributeMulticasting
      * @var MulticastingEntity|null
      */
     protected $instanceOfEntity;
+
+    /**
+     * Returns a property for an entity.
+     *
+     * @return string
+     */
+    public function getPropertyForEntity()
+    {
+        $this->throwExceptionWhenUndefinedPropertyForEntities();
+
+        return $this->propertyForEntity;
+    }
 
     /**
      * Returns an array with supported types of entities.
