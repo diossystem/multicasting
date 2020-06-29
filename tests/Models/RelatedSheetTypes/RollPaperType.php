@@ -4,9 +4,10 @@ namespace Tests\Models\RelatedSheetTypes;
 
 use Tests\Models\RelatedSheet;
 use Illuminate\Database\Eloquent\Model;
+use Dios\System\Multicasting\Interfaces\ArrayEntity;
 use Dios\System\Multicasting\Interfaces\RelatedEntity;
 
-class RollPaperType implements RelatedEntity
+class RollPaperType implements RelatedEntity, ArrayEntity
 {
     /**
      * An instance of the model.
@@ -18,6 +19,42 @@ class RollPaperType implements RelatedEntity
     public function __construct(Model &$model)
     {
         $this->model = $model;
+
+        $this->height = $this->model->height;
+        $this->width = $this->model->width;
+        $this->fillFromArray($model->properties);
+    }
+
+    /**
+     * Fills an instance of the class with values from the array.
+     *
+     * @param array|null $array
+     */
+    public function fillFromArray(array $array = null)
+    {
+        $this->setMarginsFromArray($array);
+
+        if (isset($array['width'])) {
+            $this->width = (int) $array['width'];
+        }
+
+        if (isset($array['height'])) {
+            $this->height = (int) $array['height'];
+        }
+    }
+
+    /**
+     * Sets margins from the array.
+     *
+     * @param  array|null $array
+     * @return void
+     */
+    public function setMarginsFromArray(array $array = null)
+    {
+        $this->topMargin    = $array['margin_top'] ?? 0;
+        $this->bottomMargin = $array['margin_bottom'] ?? 0;
+        $this->leftMargin   = $array['margin_left'] ?? 0;
+        $this->rightMargin  = $array['margin_right'] ?? 0;
     }
 
     /**
@@ -151,5 +188,35 @@ class RollPaperType implements RelatedEntity
             && $width >= 1
             && $this->getAvailableHeight() >= $height
             && $this->getAvailableWidth() >= $width;
+    }
+
+    /**
+     * Returns an array with margins.
+     *
+     * @return array
+     */
+    public function getArrayWithMargins(): array
+    {
+        return [
+            'margin_top' => $this->getTopMargin(),
+            'margin_bottom' => $this->getBottomMargin(),
+            'margin_left' => $this->getLeftMargin(),
+            'margin_right' => $this->getRightMargin()
+        ];
+    }
+
+    /**
+     * Returns an array of the instance.
+     *
+     * @return array
+     */
+    public function toArray(): array
+    {
+        return [
+            'width' => $this->getWidth(),
+            'height' => $this->getHeight(),
+            'available_height' => $this->getAvailableHeight(),
+            'available_width' => $this->getAvailableWidth(),
+        ] + $this->getArrayWithMargins();
     }
 }
