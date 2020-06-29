@@ -360,6 +360,8 @@ trait AttributeMulticasting
     {
         $this->instanceOfEntity = $instance;
         $this->syncInstanceWithProperty();
+        // Updates instance to set a correct instance
+        $this->instanceOfEntity = $this->makeInstanceOfEntity();
     }
 
     /**

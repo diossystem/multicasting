@@ -5,9 +5,14 @@ namespace Tests;
 use AdditionalFieldsTableSeeder;
 use SheetsTableSeeder;
 use Dios\System\Multicasting\AttributeMulticasting;
+use Dios\System\Multicasting\Interfaces\KeepsAttributeName;
+use Dios\System\Multicasting\Interfaces\KeepsEntityType;
+use Dios\System\Multicasting\Interfaces\SimpleArrayEntity;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Models\AdditionalFieldsOfPages;
-use Tests\Models\Sheet;
+use Tests\Models\RelatedSheet as Sheet;
+use Tests\Models\RelatedSheetTypes\RollPaperType;
+use Tests\Models\RelatedSheetTypes\SingleType;
 use Tests\TestCase;
 
 class AttributeMulticastingTest extends TestCase
@@ -438,7 +443,7 @@ class AttributeMulticastingTest extends TestCase
             [
                 Sheet::class,
                 Sheet::ROLL_PAPER_TYPE,
-                \Tests\Models\SheetTypes\RollPaperType::class,
+                \Tests\Models\RelatedSheetTypes\RollPaperType::class,
             ],
         ];
     }
@@ -492,7 +497,7 @@ class AttributeMulticastingTest extends TestCase
             [
                 Sheet::class,
                 Sheet::ROLL_PAPER_TYPE,
-                \Tests\Models\SheetTypes\RollPaperType::class,
+                \Tests\Models\RelatedSheetTypes\RollPaperType::class,
             ],
         ];
     }
@@ -510,7 +515,17 @@ class AttributeMulticastingTest extends TestCase
         $model = Sheet::where('type', $key)->first();
 
         if ($entityClassName) {
+            /** @var SingleType|RollPaperType $handler */
             $handler = new $entityClassName($model);
+
+            if ($handler instanceof KeepsEntityType) {
+                $handler->setEntityType($key);
+            }
+
+            if ($handler instanceof KeepsAttributeName) {
+                $handler->setAttributeName($model->getPropertyForEntity());
+            }
+
             $this->assertEquals($handler, $model->getInstance());
         } else {
             $this->assertNull($model->getInstance());
@@ -522,11 +537,11 @@ class AttributeMulticastingTest extends TestCase
         return [
             [
                 Sheet::ROLL_PAPER_TYPE,
-                \Tests\Models\SheetTypes\RollPaperType::class,
+                \Tests\Models\RelatedSheetTypes\RollPaperType::class,
             ],
             [
                 Sheet::SINGLE_TYPE,
-                \Tests\Models\SheetTypes\SingleType::class,
+                \Tests\Models\RelatedSheetTypes\SingleType::class,
             ],
             [
                 'unknown',
@@ -575,7 +590,109 @@ class AttributeMulticastingTest extends TestCase
         ];
     }
 
-    // setInstance
+    /**
+     * @param  int $key
+     * @param  string $entityClassName
+     * @return void
+     *
+     * @dataProvider setInstanceOfAdditianalFieldsProvider
+     */
+    public function testSetInstanceOfAdditionalFields(int $key, string $entityClassName = null)
+    {
+        /** @var AdditionalFieldsOfPages|AttributeMulticasting $model */
+        $model = AdditionalFieldsOfPages::where('additional_field_id', $key)->first();
+
+        if ($entityClassName) {
+            /** @var SimpleArrayEntity $instance */
+            $instance = clone $model->getInstance();
+            /** @var SimpleArrayEntity $originalInstance */
+            $originalInstance = clone $model->getInstance();
+
+            if ($instance instanceof \Tests\Models\AdditionalFieldHandlers\Map) {
+                $instance->fillFromArray([
+                    'title' => 'New name',
+                    'address' => 'New address',
+                    'phone' => 'New phone',
+                ]);
+            } elseif ($instance instanceof \Tests\Models\AdditionalFieldHandlers\Images) {
+                $instance->fillFromArray([
+                    'list' => [
+                        [
+                            'id' => 1,
+                            'alt' => 'Description',
+                            'title' => 'Title',
+                            'source_type' => 'watermark',
+                        ],
+                    ],
+                ]);
+            }
+
+            $this->assertEquals($originalInstance->toArray(), $model->values);
+            $this->assertNotEquals($originalInstance, $instance);
+            $this->assertNotEquals($model->values, $instance->toArray());
+            $model->setInstance($instance);
+            $this->assertEquals($model->values, $instance->toArray());
+            $model->save();
+
+            $model = AdditionalFieldsOfPages::where('additional_field_id', $key)->first();
+
+            $this->assertEquals($model->getInstance()->toArray(), $instance->toArray());
+            $this->assertNotEquals($model->getInstance()->toArray(), $originalInstance->toArray());
+        } else {
+            $this->assertNull($model->getInstance());
+        }
+    }
+
+    public function setInstanceOfAdditianalFieldsProvider(): array
+    {
+        return [
+            'map' => [
+                1,
+                \Tests\Models\AdditionalFieldHandlers\Map::class,
+            ],
+            'images' => [
+                2,
+                \Tests\Models\AdditionalFieldHandlers\Images::class,
+            ],
+        ];
+    }
+
+    public function testSetAnotherInstanceOfSheet()
+    {
+        /** @var Sheet|AttributeMulticasting $modelWithRollType */
+        $modelWithRollType = Sheet::where('type', Sheet::ROLL_PAPER_TYPE)->first();
+        /** @var Sheet|AttributeMulticasting $modelWithSingleType */
+        $modelWithSingleType = Sheet::where('type', Sheet::SINGLE_TYPE)->first();
+
+        $instanceWithRollType = clone $modelWithRollType->getInstance();
+        $modelWithSingleType->setInstance($instanceWithRollType);
+        $modelWithSingleType->save();
+
+        $this->assertNotEquals($instanceWithRollType, $modelWithSingleType->getInstance());
+
+        /** @var Sheet|AttributeMulticasting $modelWithSingleType */
+        $modelWithSingleType = Sheet::where('type', Sheet::SINGLE_TYPE)->first();
+
+        $this->assertNotEquals($modelWithSingleType, $modelWithRollType);
+
+        /** @var ArrayEntity $instanceWithSingleType */
+        $instanceWithSingleType = clone $modelWithSingleType->getInstance();
+
+        $this->assertEquals(
+            [
+                'margin_top' => 10,
+                'margin_bottom' => 10,
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'width' => 15000, // from single type
+                'height' => 200000, // from single type
+                'available_height' => 199980,
+                'available_width' => 14980,
+            ],
+            $instanceWithSingleType->toArray()
+        );
+    }
+
     // initializeInstanceByEntityType
     // makeInstanceOfEntity
     // makeInstanceByEntityType
@@ -594,6 +711,7 @@ class AttributeMulticastingTest extends TestCase
     // resetDataOfProperty
     // isThereNeedToConfigure
     // isThereNeedToFill
+    // getPropertyForEntity
     // exceptions:
     // throwExceptionWhenUndefinedEntityTypeMapping
     // throwExceptionWhenUndefinedSourceOfType
