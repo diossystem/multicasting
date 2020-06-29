@@ -65,6 +65,13 @@ class Sheet extends Model
     ];
 
     /**
+     * The property to read values for entities.
+     *
+     * @var string
+     */
+    protected $propertyForEntity = 'properties';
+
+    /**
      * The state of configuring instances of entities.
      *
      * @var bool
