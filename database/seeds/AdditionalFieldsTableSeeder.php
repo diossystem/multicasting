@@ -59,10 +59,11 @@ class AdditionalFieldsTableSeeder extends Seeder
                     'title' => 'This is a map',
                     'address' => '210000, Vitebsk, Belarus',
                     'phone' => '80212000000',
+                    'phones' => [],
                     'script' => '<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4845114.511799304!2d23.49280518303527!3d53.633088464731756!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46da2584e2ad4881%3A0xa1d181ec8c10!2z0JHQtdC70LDRgNGD0YHRjA!5e0!3m2!1sru!2sby!4v1589822749261!5m2!1sru!2sby" width="600" height="450" frameborder="0" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>',
                     'url' => 'https://goo.gl/maps/8bH1vbYgG6D48qH86',
-                    'image' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Strusta_Lake_-_Panorama.jpg/1280px-Strusta_Lake_-_Panorama.jpg'
-                ],
+                    'image' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Strusta_Lake_-_Panorama.jpg/1280px-Strusta_Lake_-_Panorama.jpg',
+                ]
             ]
         );
 
