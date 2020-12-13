@@ -8,7 +8,7 @@ use Dios\System\Multicasting\Exceptions\InvalidTypeOfInstance;
 
 /**
  * Getter and setter for entities with arrays.
- * 
+ *
  * @mixin AttributeMulticasting
  */
 trait ArrayGetterSetter
@@ -22,7 +22,7 @@ trait ArrayGetterSetter
     {
         $this->throwExceptionWhenUndefinedPropertyForEntities();
 
-        /** @var MulticastingEntity|ArrayEntity|null $instance **/
+        /** @var ArrayEntity|null $instance **/
         $instance = $this->getInstance();
 
         if ($instance) {
@@ -42,7 +42,7 @@ trait ArrayGetterSetter
      */
     public function setValuesToInstance(array $values)
     {
-        /** @var MulticastingEntity|ArrayEntity|null $instance **/
+        /** @var ArrayEntity|null $instance **/
         $instance = $this->getInstance();
 
         // Fills and gets data to update the current value of the property
